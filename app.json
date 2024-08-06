@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "plan-it",
-    "slug": "plan-it",
+    "name": "go",
+    "slug": "go",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
