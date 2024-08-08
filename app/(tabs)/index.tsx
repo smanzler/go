@@ -1,27 +1,60 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { ThemedView } from '@/components/ThemedView'
-import { ThemedText } from '@/components/ThemedText'
-import { ThemedButton } from '@/components/ThemedButton'
-import { StatusBar } from 'expo-status-bar'
-import { router } from 'expo-router'
+import React, { useState, useEffect, useCallback } from 'react';
+import { SafeAreaView, StyleSheet, FlatList, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ThemedView } from '@/components/ThemedView';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedIconButton } from '@/components/ThemedIconButton';
+import { StatusBar } from 'expo-status-bar';
+import { useFocusEffect, router } from 'expo-router';
 
 const Index = () => {
+  const [tasks, setTasks] = useState([]);
+
+  const loadTasks = async () => {
+    try {
+      const tasksJson = await AsyncStorage.getItem('tasks');
+      if (tasksJson !== null) {
+        setTasks(JSON.parse(tasksJson));
+      } else {
+        setTasks([]);
+      }
+    } catch (e) {
+      console.error('Failed to load tasks.', e);
+    }
+  };
+
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadTasks();
+    }, [])
+  );
+
   return (
     <ThemedView style={styles.container}>
-      <StatusBar hidden/>
+      <StatusBar hidden />
 
       <SafeAreaView>
         <ThemedText type='title'>Tasks for the day</ThemedText>
-
+        <FlatList
+          data={tasks}
+          renderItem={({ item }) => <ThemedText>{item}</ThemedText>}
+          keyExtractor={(item, index) => index.toString()}
+        />
       </SafeAreaView>
 
-      <ThemedButton style={styles.newTaskBtn} onPress={() => router.push('/(modals)/task')}/>
+      <ThemedIconButton
+        style={styles.newTaskBtn}
+        onPress={() => router.push('/(modals)/task')}
+      />
     </ThemedView>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;
 
 const styles = StyleSheet.create({
   container: {
@@ -38,5 +71,5 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
 
     borderRadius: 25,
-  }
-})
+  },
+});

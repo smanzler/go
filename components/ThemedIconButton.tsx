@@ -1,19 +1,17 @@
 import { TouchableOpacity, type TouchableOpacityProps } from 'react-native';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
-import React from 'react';
-import { ThemedText } from './ThemedText';
+import { Entypo } from '@expo/vector-icons';
 
 export type ThemedIconButtonProps = TouchableOpacityProps & {
     lightColor?: string;
     darkColor?: string;
-    cancelBtn?: boolean;
-    children?: React.ReactNode;
+    exitBtn?: boolean;
 };
 
-export function ThemedButton({ style, lightColor, darkColor, cancelBtn, children, ...otherProps }: ThemedIconButtonProps) {
-    const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, cancelBtn ? 'background' : 'icon');
-    const textColor = useThemeColor({ light: lightColor, dark: darkColor }, cancelBtn ? 'text' : 'background')
+export function ThemedIconButton({ style, lightColor, darkColor, exitBtn, ...otherProps }: ThemedIconButtonProps) {
+    const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
+    const iconColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background')
 
     return (
         <TouchableOpacity 
@@ -27,7 +25,7 @@ export function ThemedButton({ style, lightColor, darkColor, cancelBtn, children
             ]} 
             {...otherProps}
         >
-            <ThemedText style={{color: textColor}} >{children}</ThemedText>
+            <Entypo name='plus' color={iconColor} size={30} style={exitBtn && { transform: [{ rotate: '45deg' }] }} />
         </TouchableOpacity>
     );
 }
