@@ -3,11 +3,13 @@ import { ThemedText } from "./ThemedText";
 import { ThemedButton } from "./ThemedButton";
 import Task from "../models/Task";
 
+import { withObservables } from "@nozbe/watermelondb/react";
+
 type TaskListItem = {
     task: Task
 }
 
-export default function TaskListItem({ task }: TaskListItem) {
+function TaskListItem({ task }: TaskListItem) {
     const deleteTask = async (id: any) => {
 
     };
@@ -32,6 +34,12 @@ export default function TaskListItem({ task }: TaskListItem) {
         </View>
     );
 }
+
+const enhance = withObservables(['task'], ({ task }: TaskListItem) => ({
+    task,
+}))
+
+export default enhance(TaskListItem);
 
 const styles = StyleSheet.create({
     taskContainer: {
