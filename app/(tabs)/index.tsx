@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView, StyleSheet, FlatList, View, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedButton } from '@/components/ThemedButton';
+import { ThemedView } from '@/src/components/ThemedView';
+import { ThemedText } from '@/src/components/ThemedText';
+import { ThemedButton } from '@/src/components/ThemedButton';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect, router } from 'expo-router';
-import { ThemedIconButton } from '@/components/ThemedIconButton';
+import { ThemedIconButton } from '@/src/components/ThemedIconButton';
 
 const Index = () => {
   const [tasks, setTasks] = useState<any []>([]);

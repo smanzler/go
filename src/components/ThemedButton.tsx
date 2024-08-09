@@ -1,6 +1,6 @@
 import { TouchableOpacity, type TouchableOpacityProps } from 'react-native';
 
-import { useThemeColor } from '@/hooks/useThemeColor';
+import { useThemeColor } from '@/src/hooks/useThemeColor';
 import React from 'react';
 import { ThemedText } from './ThemedText';
 
