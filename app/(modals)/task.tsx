@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Keyboard, StyleSheet, TextInput, View } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedButton } from '@/src/components/ThemedButton';
 import { router } from 'expo-router';
 import { BlurView } from 'expo-blur';
@@ -24,6 +23,7 @@ const TaskScreen = () => {
                 });
             });
             setDescription('')
+            router.back();
         } else {
 
         }

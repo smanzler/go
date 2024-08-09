@@ -4,17 +4,9 @@ import { useEffect, useState } from "react";
 import { tasksCollection } from "../db";
 import Task from "../models/Task";
 
-export default function TasksList() {
-    const [tasks, setTasks] = useState<Task []>([]);
+import { withObservables } from '@nozbe/watermelondb/react'
 
-    useEffect(() => {
-        const fetchTasks = async () => {
-            const tasks = await tasksCollection.query().fetch();
-            setTasks(tasks);
-        }
-
-        fetchTasks();
-    }, [])
+function TasksList({ tasks }: { tasks: Task [] }) {
 
     return (
         <FlatList
@@ -23,3 +15,9 @@ export default function TasksList() {
         />
     )
 }
+
+const enhance = withObservables([], () => ({
+    tasks: tasksCollection.query()
+}));
+
+export default enhance(TasksList);
