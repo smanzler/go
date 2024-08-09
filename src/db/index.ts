@@ -3,6 +3,7 @@ import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
 
 import schema from "./schema";
 import migrations from "./migrations";
+import Task from "../models/Task";
 
 const adapter = new SQLiteAdapter({
     schema,
@@ -16,6 +17,6 @@ const adapter = new SQLiteAdapter({
 const database = new Database({
     adapter,
     modelClasses: [
-
+        Task
     ]
 })
