@@ -5,9 +5,10 @@ import { ThemedButton } from '@/src/components/ThemedButton';
 import { router } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { ThemedIconButton } from '@/src/components/ThemedIconButton';
+import database, { tasksCollection } from '@/src/db';
 
 const TaskScreen = () => {
-    const [task, setTask] = useState('');
+    const [description, setDescription] = useState('');
     const inputRef = useRef<TextInput>(null);
 
     useEffect(() => {
@@ -15,21 +16,18 @@ const TaskScreen = () => {
     }, [])
 
     const saveTask = async () => {
-        if (task.trim()) {
-          try {
-            const existingTasks = await AsyncStorage.getItem('tasks');
-            const tasks = existingTasks ? JSON.parse(existingTasks) : [];
-            const newTask = { id: Date.now(), text: task, completed: false };
-            const updatedTasks = [...tasks, newTask];
-            await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
-            router.back();
-          } catch (e) {
-            console.error('Failed to save task.', e);
-          }
+        if (description.trim()) {
+            await database.write(async () => {
+                await tasksCollection.create(task => {
+                    task.description = description.trim(),
+                        task.complete = false
+                });
+            });
+            setDescription('')
         } else {
 
         }
-      };
+    };
 
     return (
         <BlurView intensity={40} style={styles.container} >
@@ -39,8 +37,8 @@ const TaskScreen = () => {
                 ref={inputRef}
                 style={styles.input}
                 placeholder="Enter something you'd like to do"
-                value={task}
-                onChangeText={setTask}
+                value={description}
+                onChangeText={setDescription}
             />
             <ThemedButton style={styles.saveBtn} onPress={saveTask} cancelBtn>
                 Save Task
@@ -53,7 +51,7 @@ export default TaskScreen;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, 
+        flex: 1,
         alignItems: 'center',
         paddingTop: 150,
     },

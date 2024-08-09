@@ -20,3 +20,7 @@ const database = new Database({
         Task
     ]
 })
+
+export default database;
+
+export const tasksCollection = database.get<Task>('tasks');

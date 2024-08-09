@@ -7,9 +7,25 @@ import { ThemedButton } from '@/src/components/ThemedButton';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect, router } from 'expo-router';
 import { ThemedIconButton } from '@/src/components/ThemedIconButton';
+import database, { tasksCollection } from '@/src/db';
+import TasksList from '@/src/components/TasksList';
 
 const Index = () => {
   const [tasks, setTasks] = useState<any []>([]);
+
+  const onRead = async () => {
+
+    const tasks = await tasksCollection.query().fetch();
+    console.log(tasks)
+
+    // await database.write(async () => {
+    //   await tasksCollection.create(task => {
+    //     task.description = 'Gym',
+    //     task.complete = false
+
+    //   })
+    // })
+  }
 
   const loadTasks = async () => {
     try {
@@ -34,43 +50,6 @@ const Index = () => {
       console.error('Failed to load tasks.', e);
     }
   };
-  
-
-  const deleteTask = async (id: any) => {
-    const filteredTasks = tasks.filter(task => task.id !== id);
-    setTasks(filteredTasks);
-    await AsyncStorage.setItem('tasks', JSON.stringify(filteredTasks));
-  };
-
-  const toggleTaskCompletion = async (id: any) => {
-    const updatedTasks = tasks.map(task =>
-      task.id === id ? { ...task, completed: !task.completed } : task
-    );
-    setTasks(updatedTasks);
-    await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      loadTasks();
-    }, [])
-  );
-
-  const renderTask = ({ item }: any) => (
-    <View style={styles.taskContainer}>
-      <ThemedText style={[styles.taskText, item.completed && styles.completedText]}>
-        {item.text}
-      </ThemedText>
-      <View style={styles.buttonsContainer}>
-        <ThemedButton style={styles.completeBtn} onPress={() => toggleTaskCompletion(item.id)}>
-          {item.completed ? 'Undo' : 'Complete'}
-        </ThemedButton>
-        <ThemedButton style={styles.deleteBtn} onPress={() => deleteTask(item.id)}>
-          Delete
-        </ThemedButton>
-      </View>
-    </View>
-  );
 
   return (
     <ThemedView style={styles.container}>
@@ -78,12 +57,13 @@ const Index = () => {
 
       <SafeAreaView>
         <ThemedText type='title'>Tasks for the day</ThemedText>
-        <FlatList
-          data={tasks}
-          renderItem={renderTask}
-          keyExtractor={(item) => item.id.toString()}
-        />
+
+        <TasksList />
       </SafeAreaView>
+
+      <ThemedButton onPress={onRead}>
+        Read
+      </ThemedButton>
 
       <ThemedIconButton
         style={styles.newTaskBtn}
@@ -108,28 +88,5 @@ const styles = StyleSheet.create({
     width: 50,
     aspectRatio: 1,
     borderRadius: 25,
-  },
-  taskContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
-  taskText: {
-    fontSize: 16,
-  },
-  completedText: {
-    textDecorationLine: 'line-through',
-    color: 'gray',
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  completeBtn: {
-    marginRight: 10,
-  },
-  deleteBtn: {
-    backgroundColor: 'red',
   },
 });
