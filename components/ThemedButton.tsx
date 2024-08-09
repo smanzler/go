@@ -12,7 +12,7 @@ export type ThemedIconButtonProps = TouchableOpacityProps & {
 };
 
 export function ThemedButton({ style, lightColor, darkColor, cancelBtn, children, ...otherProps }: ThemedIconButtonProps) {
-    const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, cancelBtn ? 'background' : 'icon');
+    const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, cancelBtn ? 'background' : 'text');
     const textColor = useThemeColor({ light: lightColor, dark: darkColor }, cancelBtn ? 'text' : 'background')
 
     return (
@@ -23,6 +23,10 @@ export function ThemedButton({ style, lightColor, darkColor, cancelBtn, children
                     justifyContent: 'center',
                     alignItems: 'center'
                 }, 
+                cancelBtn && {
+                    borderWidth: 1,
+                    borderColor: textColor
+                },
                 style
             ]} 
             {...otherProps}
