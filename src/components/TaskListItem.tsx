@@ -4,18 +4,25 @@ import { ThemedButton } from "./ThemedButton";
 import Task from "../models/Task";
 
 import { withObservables } from "@nozbe/watermelondb/react";
+import database from "../db";
 
 type TaskListItem = {
     task: Task
 }
 
 function TaskListItem({ task }: TaskListItem) {
-    const deleteTask = async (id: any) => {
-
+    const onDelete = async () => {
+        await database.write(async () => {
+            await task.markAsDeleted();
+        });
     };
 
-    const toggleTaskCompletion = async (id: any) => {
-
+    const onComplete = async () => {
+        await database.write(async () => {
+            await task.update(task => {
+                task.complete = !task.complete;
+            })
+        });
     };
 
     return (
@@ -24,10 +31,10 @@ function TaskListItem({ task }: TaskListItem) {
                 {task.description}
             </ThemedText>
             <View style={styles.buttonsContainer}>
-                <ThemedButton style={styles.completeBtn} onPress={() => toggleTaskCompletion(task.id)}>
+                <ThemedButton style={styles.completeBtn} onPress={onComplete}>
                     {task.complete ? 'Undo' : 'Complete'}
                 </ThemedButton>
-                <ThemedButton style={styles.deleteBtn} onPress={() => deleteTask(task.id)}>
+                <ThemedButton style={styles.deleteBtn} onPress={onDelete}>
                     Delete
                 </ThemedButton>
             </View>
