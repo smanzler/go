@@ -1,37 +1,34 @@
 import { TouchableOpacity, type TouchableOpacityProps } from 'react-native';
 
-import { useThemeColor } from '@/src/hooks/useThemeColor';
 import React from 'react';
 import { ThemedText } from './ThemedText';
+import { useTheme } from '../providers/ThemeProvider';
 
 export type ThemedIconButtonProps = TouchableOpacityProps & {
-    lightColor?: string;
-    darkColor?: string;
     cancelBtn?: boolean;
     children?: React.ReactNode;
 };
 
-export function ThemedButton({ style, lightColor, darkColor, cancelBtn, children, ...otherProps }: ThemedIconButtonProps) {
-    const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, cancelBtn ? 'background' : 'text');
-    const textColor = useThemeColor({ light: lightColor, dark: darkColor }, cancelBtn ? 'text' : 'background')
+export function ThemedButton({ style, cancelBtn, children, ...otherProps }: ThemedIconButtonProps) {
+    const { theme } = useTheme();
 
     return (
         <TouchableOpacity 
             style={[
                 { 
-                    backgroundColor,
+                    backgroundColor: theme.background,
                     justifyContent: 'center',
                     alignItems: 'center'
                 }, 
                 cancelBtn && {
                     borderWidth: 1,
-                    borderColor: textColor
+                    borderColor: theme.text
                 },
                 style
             ]} 
             {...otherProps}
         >
-            <ThemedText style={{color: textColor}} >{children}</ThemedText>
+            <ThemedText style={{color: theme.text}} >{children}</ThemedText>
         </TouchableOpacity>
     );
 }
