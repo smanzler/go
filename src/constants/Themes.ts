@@ -5,6 +5,7 @@ export type Theme = {
     text: string;
     primary: string;
     secondary: string;
+    useShadow: boolean;
 };
 
 export const lightTheme: Theme = {
@@ -12,6 +13,7 @@ export const lightTheme: Theme = {
     text: '#000000',
     primary: '#1E90FF',
     secondary: '#FF6347',
+    useShadow: true
 };
 
 export const darkTheme: Theme = {
@@ -19,4 +21,5 @@ export const darkTheme: Theme = {
     text: '#FFFFFF',
     primary: '#1E90FF',
     secondary: '#FF6347',
+    useShadow: false
 };
