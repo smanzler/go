@@ -13,12 +13,13 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     const [currentTheme, setCurrentTheme] = useState<ThemeName>('system');
-    const [theme, setTheme] = useState<Theme>(lightTheme);
+
+    const systemTheme = Appearance.getColorScheme();
+    const [theme, setTheme] = useState<Theme>(systemTheme === 'dark' ? darkTheme : lightTheme);
 
     useEffect(() => {
         const loadTheme = async () => {
             const savedTheme = (await AsyncStorage.getItem('theme')) as ThemeName | null;
-            const systemTheme = Appearance.getColorScheme();
 
             if (savedTheme) {
                 setCurrentTheme(savedTheme);
