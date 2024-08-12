@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { SafeAreaView, StyleSheet, FlatList, View, Text } from 'react-native';
+import { SafeAreaView, StyleSheet, FlatList, View, Text, Switch, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedView } from '@/src/components/ThemedView';
 import { ThemedText } from '@/src/components/ThemedText';
@@ -9,9 +9,15 @@ import { useFocusEffect, router } from 'expo-router';
 import { ThemedIconButton } from '@/src/components/ThemedIconButton';
 import database, { tasksCollection } from '@/src/db';
 import TasksList from '@/src/components/TasksList';
+import { useTheme } from '@/src/providers/ThemeProvider';
 
 const Index = () => {
   const [tasks, setTasks] = useState<any []>([]);
+  const { theme, toggleTheme, currentTheme } = useTheme();
+
+  const onPress = () => {
+    currentTheme === 'light' ? toggleTheme('dark') : toggleTheme('light');
+  }
 
   return (
     <ThemedView style={styles.container}>
@@ -23,8 +29,11 @@ const Index = () => {
         <TasksList />
       </SafeAreaView>
 
+      <Button title='Change Theme' onPress={onPress}/>
+
       <ThemedIconButton
         style={styles.newTaskBtn}
+        elevation={10}
         onPress={() => router.push('/(modals)/task')}
       />
     </ThemedView>
