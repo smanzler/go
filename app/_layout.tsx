@@ -1,4 +1,3 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Redirect, router, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -7,6 +6,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/src/hooks/useColorScheme';
 import AuthProvider, { useAuth } from '@/src/providers/AuthProvider';
+import { ThemeProvider } from '@/src/providers/ThemeProvider';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -29,7 +29,7 @@ export default function RootLayout() {
 
     return (
         <AuthProvider>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <ThemeProvider>
                 <RootLayoutNav />
             </ThemeProvider>
         </AuthProvider>
