@@ -1,11 +1,12 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Redirect, router, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/src/hooks/useColorScheme';
+import AuthProvider, { useAuth } from '@/src/providers/AuthProvider';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -27,28 +28,44 @@ export default function RootLayout() {
     }
 
     return (
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <RootLayoutNav />
-        </ThemeProvider>
+        <AuthProvider>
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <RootLayoutNav />
+            </ThemeProvider>
+        </AuthProvider>
     );
 }
 
 function RootLayoutNav() {
+    const { isAuthenticated } = useAuth();
+
+    useEffect(() => {
+        if (!isAuthenticated) { 
+            router.navigate('/(auth)/login');
+        }
+    }, [isAuthenticated])
+
     return (
         <Stack>
-            <Stack.Screen 
-                name='(tabs)' 
-                options={{ headerShown: false }} 
+            <Stack.Screen
+                name='(tabs)'
+                options={{ headerShown: false }}
             />
             <Stack.Screen
-                name='(modals)/task' 
+                name='(modals)/task'
                 options={{
                     presentation: 'transparentModal',
                     animation: 'fade',
                     headerShown: false,
                 }}
             />
-      
-    </Stack>
+            <Stack.Screen 
+                name='(auth)/login'
+                options={{
+                    presentation: 'modal',
+                    headerTitle: 'Login'
+                }}
+            />
+        </Stack>
     )
 }
