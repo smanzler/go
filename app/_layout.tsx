@@ -5,7 +5,9 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import AuthProvider, { useAuth } from '@/src/providers/AuthProvider';
-import { ThemeProvider } from '@/src/providers/ThemeProvider';
+import { ThemeProvider, useTheme } from '@/src/providers/ThemeProvider';
+import { useElevation } from '@/src/constants/Themes';
+import tinycolor from 'tinycolor2';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -36,6 +38,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
     const { isAuthenticated } = useAuth();
+    const { theme } = useTheme();
 
     useEffect(() => {
         if (!isAuthenticated) { 
@@ -61,7 +64,9 @@ function RootLayoutNav() {
                 name='(auth)/login'
                 options={{
                     presentation: 'modal',
-                    headerTitle: 'Login'
+                    headerTitle: 'Login',
+                    headerTitleStyle: { color: theme.text},
+                    headerStyle: { backgroundColor: tinycolor(theme.background).lighten(10).toHexString() }
                 }}
             />
         </Stack>
