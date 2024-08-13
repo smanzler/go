@@ -1,5 +1,11 @@
 import { Model } from "@nozbe/watermelondb";
-import { field, nochange, text } from "@nozbe/watermelondb/decorators";
+import {
+  date,
+  field,
+  nochange,
+  readonly,
+  text,
+} from "@nozbe/watermelondb/decorators";
 
 export default class Task extends Model {
   static table = "tasks";
@@ -9,4 +15,7 @@ export default class Task extends Model {
   @text("image") image: any;
 
   @nochange @field("user_id") userId: any;
+
+  @readonly @date("created_at") createdAt: any;
+  @readonly @date("updated_at") updatedAt: any;
 }

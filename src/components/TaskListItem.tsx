@@ -35,7 +35,7 @@ function TaskListItem({ task }: TaskListItem) {
       <ThemedText
         style={[styles.taskText, task.complete && styles.completedText]}
       >
-        {task.userId}
+        {task.description}
       </ThemedText>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity onPress={onComplete}>
