@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { ThemedButton } from "./ThemedButton";
 import Task from "../models/Task";
@@ -7,6 +7,7 @@ import { withObservables } from "@nozbe/watermelondb/react";
 import database from "../db";
 import { useTheme } from "../providers/ThemeProvider";
 import { useElevation } from "../constants/Themes";
+import { Feather, Ionicons } from "@expo/vector-icons";
 
 type TaskListItem = {
     task: Task
@@ -36,12 +37,12 @@ function TaskListItem({ task }: TaskListItem) {
                 {task.description}
             </ThemedText>
             <View style={styles.buttonsContainer}>
-                <ThemedButton style={styles.completeBtn} onPress={onComplete}>
-                    {task.complete ? 'Undo' : 'Complete'}
-                </ThemedButton>
-                <ThemedButton style={styles.deleteBtn} onPress={onDelete}>
-                    Delete
-                </ThemedButton>
+                <TouchableOpacity onPress={onComplete}>
+                    <Feather name={task.complete ? 'check-circle' : 'circle'} color={theme.text} size={24} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onDelete}>
+                    <Ionicons name='trash-outline' color={'red'} size={24} />
+                </TouchableOpacity>
             </View>
         </View>
     );
