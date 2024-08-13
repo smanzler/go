@@ -1,13 +1,25 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React from "react";
 import { ThemedView } from "@/src/components/ThemedView";
 import { ThemedText } from "@/src/components/ThemedText";
 import { router } from "expo-router";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { supabase } from "@/src/lib/supabase";
+import { useElevation } from "@/src/constants/Themes";
+import { useTheme } from "@/src/providers/ThemeProvider";
+import RemoteImage from "@/src/components/RemoteImage";
 
 const Profile = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const { theme } = useTheme();
+  console.log(user);
 
   return !isAuthenticated ? (
     <ThemedView style={styles.container}>
@@ -23,9 +35,24 @@ const Profile = () => {
       ></Button>
     </ThemedView>
   ) : (
-    <ThemedView style={{ flex: 1, alignItems: "center" }}>
+    <ScrollView
+      style={{
+        flex: 1,
+        padding: 40,
+        backgroundColor: theme.background,
+      }}
+    >
+      <View style={[styles.card, useElevation(10, theme)]}>
+        <View style={styles.profilePic}>
+          <RemoteImage
+            path={user?.id}
+            profile
+            style={{ flex: 1, aspectRatio: 1 }}
+          />
+        </View>
+      </View>
       <Button title="Log out" onPress={() => supabase.auth.signOut()}></Button>
-    </ThemedView>
+    </ScrollView>
   );
 };
 
@@ -41,5 +68,17 @@ const styles = StyleSheet.create({
   text: {
     marginBottom: 20,
     textAlign: "center",
+  },
+  card: {
+    flex: 1,
+    alignItems: "center",
+    padding: 24,
+    borderRadius: 24,
+  },
+  profilePic: {
+    width: 150,
+    aspectRatio: 1,
+    overflow: "hidden",
+    borderRadius: 75,
   },
 });

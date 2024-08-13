@@ -6,21 +6,19 @@ import migrations from "./migrations";
 import Task from "../models/Task";
 
 const adapter = new SQLiteAdapter({
-    schema,
-    migrations,
-    jsi: true,
-    onSetUpError: (error) => {
-        console.log(error);
-    }
-})
+  schema,
+  // migrations,
+  jsi: true,
+  onSetUpError: (error) => {
+    console.log(error);
+  },
+});
 
 const database = new Database({
-    adapter,
-    modelClasses: [
-        Task
-    ]
-})
+  adapter,
+  modelClasses: [Task],
+});
 
 export default database;
 
-export const tasksCollection = database.get<Task>('tasks');
+export const tasksCollection = database.get<Task>("tasks");
