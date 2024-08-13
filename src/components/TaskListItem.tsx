@@ -30,7 +30,7 @@ function TaskListItem({ task }: TaskListItem) {
     };
 
     return (
-        <View style={[styles.taskContainer, { backgroundColor: theme.background}, useElevation(10)]}>
+        <View style={[styles.taskContainer, { backgroundColor: theme.background}, useElevation(10, theme)]}>
 
             <ThemedText style={[styles.taskText, task.complete && styles.completedText]}>
                 {task.description}

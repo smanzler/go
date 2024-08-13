@@ -28,8 +28,7 @@ export const darkTheme: Theme = {
     useShadow: false
 };
 
-export const useElevation = (elevation: number): StyleProp<ViewStyle> => {
-    const { theme } = useTheme();
+export const useElevation = (elevation: number, theme: Theme): StyleProp<ViewStyle> => {
     
     const shadowStyles = {
         shadowColor: 'black',

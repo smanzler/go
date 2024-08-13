@@ -33,7 +33,7 @@ const Index = () => {
       <Button title='Change Theme' onPress={onPress}/>
 
       <ThemedIconButton
-        style={[styles.newTaskBtn, useElevation(10)]}
+        style={[styles.newTaskBtn, useElevation(10, theme)]}
         onPress={() => router.push('/(modals)/task')}
       />
     </ThemedView>
