@@ -10,6 +10,7 @@ import { ThemedIconButton } from '@/src/components/ThemedIconButton';
 import database, { tasksCollection } from '@/src/db';
 import TasksList from '@/src/components/TasksList';
 import { useTheme } from '@/src/providers/ThemeProvider';
+import { useElevation } from '@/src/constants/Themes';
 
 const Index = () => {
   const [tasks, setTasks] = useState<any []>([]);
@@ -32,8 +33,7 @@ const Index = () => {
       <Button title='Change Theme' onPress={onPress}/>
 
       <ThemedIconButton
-        style={styles.newTaskBtn}
-        elevation={10}
+        style={[styles.newTaskBtn, useElevation(10)]}
         onPress={() => router.push('/(modals)/task')}
       />
     </ThemedView>

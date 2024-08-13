@@ -1,3 +1,7 @@
+import { StyleProp, ViewStyle } from "react-native";
+import { useTheme } from "../providers/ThemeProvider";
+import tinycolor from 'tinycolor2';
+
 export type ThemeName = 'light' | 'dark' | 'system';
 
 export type Theme = {
@@ -22,4 +26,24 @@ export const darkTheme: Theme = {
     primary: '#1E90FF',
     secondary: '#FF6347',
     useShadow: false
+};
+
+export const useElevation = (elevation: number): StyleProp<ViewStyle> => {
+    const { theme } = useTheme();
+    
+    const shadowStyles = {
+        shadowColor: 'black',
+        shadowOpacity: Math.min(elevation * 0.05, 0.5),
+        shadowRadius: 7,
+        shadowOffset: {
+            width: Math.min(elevation * 0.5, 5),
+            height: Math.min(elevation * 0.5, 5),
+        }
+    };
+
+    const blendedBackground = {
+        backgroundColor: tinycolor(theme.background).lighten(elevation * 2).toHexString()
+    };
+
+    return theme.useShadow ? shadowStyles : blendedBackground;
 };

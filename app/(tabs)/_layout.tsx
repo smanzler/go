@@ -3,6 +3,7 @@ import React from 'react';
 
 import { TabBarIcon } from '@/src/components/navigation/TabBarIcon';
 import { useTheme } from '@/src/providers/ThemeProvider';
+import { useElevation } from '@/src/constants/Themes';
 
 export default function TabLayout() {
   const { theme }  = useTheme();
@@ -11,10 +12,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: theme.text,
-        tabBarStyle: {
-          backgroundColor: theme.background,
-          borderTopWidth: 0,
-        },
+        tabBarStyle: [{ borderTopWidth: 0 }, useElevation(10)],
         headerShown: false,
       }}>
       <Tabs.Screen

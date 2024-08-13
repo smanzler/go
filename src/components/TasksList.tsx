@@ -6,12 +6,13 @@ import Task from "../models/Task";
 
 import { withObservables } from '@nozbe/watermelondb/react'
 
-function TasksList({ tasks }: { tasks: Task [] }) {
+function TasksList({ tasks }: { tasks: Task[] }) {
 
     return (
         <FlatList
-          data={tasks}
-          renderItem={({ item }) => <TaskListItem task={item} />}
+            style={{ overflow: 'visible' }}
+            data={tasks}
+            renderItem={({ item }) => <TaskListItem task={item} />}
         />
     )
 }

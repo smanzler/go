@@ -21,6 +21,7 @@
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-navigation/native": "^6.0.2",
     "@supabase/supabase-js": "^2.45.1",
+    "@types/tinycolor2": "^1.4.6",
     "expo": "~51.0.24",
     "expo-blur": "^13.0.2",
     "expo-build-properties": "~0.12.5",
