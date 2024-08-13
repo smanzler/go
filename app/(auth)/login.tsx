@@ -3,7 +3,7 @@ import { Alert, Button, StyleSheet, TextInput, View } from "react-native";
 import { supabase } from "@/src/lib/supabase";
 import { ThemedView } from "@/src/components/ThemedView";
 import { router } from "expo-router";
-import { useElevation } from "@/src/constants/Themes";
+import { addTint, useElevation } from "@/src/constants/Themes";
 import { useTheme } from "@/src/providers/ThemeProvider";
 
 export default function Auth() {
@@ -50,7 +50,7 @@ export default function Auth() {
         <TextInput
           onChangeText={(text) => setEmail(text)}
           value={email}
-          placeholderTextColor={"grey"}
+          placeholderTextColor={addTint(theme.text, !theme.useShadow, 40)}
           placeholder="email@address.com"
           autoCapitalize={"none"}
           style={[
@@ -65,7 +65,7 @@ export default function Auth() {
           onChangeText={(text) => setPassword(text)}
           value={password}
           secureTextEntry={true}
-          placeholderTextColor={"grey"}
+          placeholderTextColor={addTint(theme.text, !theme.useShadow, 40)}
           placeholder="Password"
           autoCapitalize={"none"}
           style={[

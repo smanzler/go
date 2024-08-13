@@ -51,3 +51,9 @@ export const useElevation = (
 
   return theme.useShadow ? shadowStyles : blendedBackground;
 };
+
+export const addTint = (color: string, useShadow: boolean, amount: number) => {
+  return useShadow
+    ? tinycolor(color).darken(amount).toHexString()
+    : tinycolor(color).lighten(amount).toHexString();
+};
