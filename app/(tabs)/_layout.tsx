@@ -4,15 +4,15 @@ import React from 'react';
 import { TabBarIcon } from '@/src/components/navigation/TabBarIcon';
 import { useTheme } from '@/src/providers/ThemeProvider';
 import { useElevation } from '@/src/constants/Themes';
+import { TabBar } from '@/src/components/navigation/TabBar';
 
 export default function TabLayout() {
   const { theme }  = useTheme();
 
   return (
     <Tabs
+      tabBar={(props) => <TabBar {...props} />}
       screenOptions={{
-        tabBarActiveTintColor: theme.text,
-        tabBarStyle: [{ borderTopWidth: 0 }, useElevation(5, theme)],
         headerShown: false,
       }}>
       <Tabs.Screen
