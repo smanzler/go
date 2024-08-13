@@ -9,18 +9,12 @@ import { useTheme } from "../providers/ThemeProvider";
 import { useElevation } from "../constants/Themes";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
-type TaskListItem = {
+export type TaskListItem = {
     task: Task
 }
 
 function TaskListItem({ task }: TaskListItem) {
     const { theme } = useTheme();
-
-    const onDelete = async () => {
-        await database.write(async () => {
-            await task.markAsDeleted();
-        });
-    };
 
     const onComplete = async () => {
         await database.write(async () => {
@@ -39,9 +33,6 @@ function TaskListItem({ task }: TaskListItem) {
             <View style={styles.buttonsContainer}>
                 <TouchableOpacity onPress={onComplete}>
                     <Feather name={task.complete ? 'check-circle' : 'circle'} color={theme.text} size={24} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={onDelete}>
-                    <Ionicons name='trash-outline' color={'red'} size={24} />
                 </TouchableOpacity>
             </View>
         </View>
