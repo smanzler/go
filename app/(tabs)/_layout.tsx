@@ -12,7 +12,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: theme.text,
-        tabBarStyle: [{ borderTopWidth: 0 }, useElevation(10, theme)],
+        tabBarStyle: [{ borderTopWidth: 0 }, useElevation(5, theme)],
         headerShown: false,
       }}>
       <Tabs.Screen

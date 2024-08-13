@@ -5,10 +5,15 @@ import { router } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { ThemedIconButton } from '@/src/components/ThemedIconButton';
 import database, { tasksCollection } from '@/src/db';
+import { useTheme } from '@/src/providers/ThemeProvider';
+import { useElevation } from '@/src/constants/Themes';
+import tinycolor from 'tinycolor2';
 
 const TaskScreen = () => {
     const [description, setDescription] = useState('');
     const inputRef = useRef<TextInput>(null);
+
+    const { theme } = useTheme();
 
     useEffect(() => {
         inputRef.current?.focus();
@@ -30,17 +35,18 @@ const TaskScreen = () => {
     };
 
     return (
-        <BlurView intensity={40} style={styles.container} >
-            <ThemedIconButton style={styles.exitBtn} onPress={() => router.back()} exitBtn />
+        <BlurView intensity={50} style={styles.container} >
+            <ThemedIconButton style={[styles.exitBtn, !theme.useShadow && { backgroundColor: tinycolor(theme.background).lighten(20).toHexString()}]} onPress={() => router.back()} exitBtn />
 
             <TextInput
                 ref={inputRef}
-                style={styles.input}
+                style={[styles.input, { color: theme.text }]}
+                placeholderTextColor={'grey'}
                 placeholder="Enter something you'd like to do"
                 value={description}
                 onChangeText={setDescription}
             />
-            <ThemedButton style={styles.saveBtn} onPress={saveTask} cancelBtn>
+            <ThemedButton style={[styles.saveBtn, !theme.useShadow && { backgroundColor: tinycolor(theme.background).lighten(20).toHexString()}]} onPress={saveTask} cancelBtn>
                 Save Task
             </ThemedButton>
         </BlurView>

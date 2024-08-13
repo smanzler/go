@@ -20,10 +20,6 @@ export function ThemedButton({ style, cancelBtn, children, ...otherProps }: Them
                     justifyContent: 'center',
                     alignItems: 'center'
                 }, 
-                cancelBtn && {
-                    borderWidth: 1,
-                    borderColor: theme.text
-                },
                 style
             ]} 
             {...otherProps}
