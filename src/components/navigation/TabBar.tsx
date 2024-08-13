@@ -10,7 +10,7 @@ import { useTheme } from "@/src/providers/ThemeProvider";
 import { useElevation } from "@/src/constants/Themes";
 import { Feather } from "@expo/vector-icons";
 import TabBarButton from "./TabBarButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -38,6 +38,12 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
       transform: [{ translateX: tabPositionX.value }],
     };
   });
+
+  useEffect(() => {
+    tabPositionX.value = withSpring(buttonWidth * state.index, {
+      duration: 1500,
+    });
+  }, [state.index]);
 
   return (
     <View
@@ -73,9 +79,6 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         const isFocused = state.index === index;
 
         const onPress = () => {
-          tabPositionX.value = withSpring(buttonWidth * index, {
-            duration: 1500,
-          });
           const event = navigation.emit({
             type: "tabPress",
             target: route.key,

@@ -4,6 +4,7 @@ import { ThemedView } from "@/src/components/ThemedView";
 import { ThemedText } from "@/src/components/ThemedText";
 import { router } from "expo-router";
 import { useAuth } from "@/src/providers/AuthProvider";
+import { supabase } from "@/src/lib/supabase";
 
 const Profile = () => {
   const { isAuthenticated } = useAuth();
@@ -22,7 +23,9 @@ const Profile = () => {
       ></Button>
     </ThemedView>
   ) : (
-    <ThemedView></ThemedView>
+    <ThemedView style={{ flex: 1, alignItems: "center" }}>
+      <Button title="Log out" onPress={() => supabase.auth.signOut()}></Button>
+    </ThemedView>
   );
 };
 

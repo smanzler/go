@@ -1,37 +1,47 @@
-import React, { useState } from 'react'
-import { Alert, Button, StyleSheet, TextInput, View } from 'react-native'
-import { supabase } from '@/src/lib/supabase'
-import { ThemedView } from '@/src/components/ThemedView'
+import React, { useState } from "react";
+import { Alert, Button, StyleSheet, TextInput, View } from "react-native";
+import { supabase } from "@/src/lib/supabase";
+import { ThemedView } from "@/src/components/ThemedView";
+import { router } from "expo-router";
+import { useElevation } from "@/src/constants/Themes";
+import { useTheme } from "@/src/providers/ThemeProvider";
 
 export default function Auth() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const { theme } = useTheme();
 
   async function signInWithEmail() {
-    setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({
+    setLoading(true);
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
-    })
+    });
 
-    if (error) Alert.alert(error.message)
-    setLoading(false)
+    if (error) Alert.alert(error.message);
+    if (session) router.navigate("/");
+    setLoading(false);
   }
 
   async function signUpWithEmail() {
-    setLoading(true)
+    setLoading(true);
     const {
       data: { session },
       error,
     } = await supabase.auth.signUp({
       email: email,
       password: password,
-    })
+    });
 
-    if (error) Alert.alert(error.message)
-    if (!session) Alert.alert('Please check your inbox for email verification!')
-    setLoading(false)
+    if (error) Alert.alert(error.message);
+
+    if (session) router.navigate("/");
+    setLoading(false);
   }
 
   return (
@@ -40,8 +50,14 @@ export default function Auth() {
         <TextInput
           onChangeText={(text) => setEmail(text)}
           value={email}
+          placeholderTextColor={"grey"}
           placeholder="email@address.com"
-          autoCapitalize={'none'}
+          autoCapitalize={"none"}
+          style={[
+            styles.textInput,
+            useElevation(5, theme),
+            { color: theme.text },
+          ]}
         />
       </View>
       <View style={styles.verticallySpaced}>
@@ -49,18 +65,32 @@ export default function Auth() {
           onChangeText={(text) => setPassword(text)}
           value={password}
           secureTextEntry={true}
+          placeholderTextColor={"grey"}
           placeholder="Password"
-          autoCapitalize={'none'}
+          autoCapitalize={"none"}
+          style={[
+            styles.textInput,
+            useElevation(5, theme),
+            { color: theme.text },
+          ]}
         />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
+        <Button
+          title="Sign in"
+          disabled={loading}
+          onPress={() => signInWithEmail()}
+        />
       </View>
       <View style={styles.verticallySpaced}>
-        <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
+        <Button
+          title="Sign up"
+          disabled={loading}
+          onPress={() => signUpWithEmail()}
+        />
       </View>
     </ThemedView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -72,9 +102,13 @@ const styles = StyleSheet.create({
   verticallySpaced: {
     paddingTop: 4,
     paddingBottom: 4,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
   mt20: {
     marginTop: 20,
   },
-})
+  textInput: {
+    padding: 12,
+    borderRadius: 10,
+  },
+});
