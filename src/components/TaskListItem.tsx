@@ -5,12 +5,16 @@ import Task from "../models/Task";
 
 import { withObservables } from "@nozbe/watermelondb/react";
 import database from "../db";
+import { useTheme } from "../providers/ThemeProvider";
+import { useElevation } from "../constants/Themes";
 
 type TaskListItem = {
     task: Task
 }
 
 function TaskListItem({ task }: TaskListItem) {
+    const { theme } = useTheme();
+
     const onDelete = async () => {
         await database.write(async () => {
             await task.markAsDeleted();
@@ -26,7 +30,8 @@ function TaskListItem({ task }: TaskListItem) {
     };
 
     return (
-        <View style={styles.taskContainer}>
+        <View style={[styles.taskContainer, { backgroundColor: theme.background}, useElevation(10, theme)]}>
+
             <ThemedText style={[styles.taskText, task.complete && styles.completedText]}>
                 {task.description}
             </ThemedText>
@@ -53,7 +58,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 10,
+        padding: 10,
+        marginVertical: 10,
+        borderRadius: 10,
     },
     taskText: {
         fontSize: 16,

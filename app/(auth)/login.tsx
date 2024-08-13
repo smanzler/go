@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Alert, Button, StyleSheet, TextInput, View } from 'react-native'
 import { supabase } from '@/src/lib/supabase'
+import { ThemedView } from '@/src/components/ThemedView'
 
 export default function Auth() {
   const [email, setEmail] = useState('')
@@ -34,7 +35,7 @@ export default function Auth() {
   }
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <TextInput
           onChangeText={(text) => setEmail(text)}
@@ -58,13 +59,14 @@ export default function Auth() {
       <View style={styles.verticallySpaced}>
         <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
       </View>
-    </View>
+    </ThemedView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    flex: 1,
+    paddingTop: 52,
     padding: 12,
   },
   verticallySpaced: {
