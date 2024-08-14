@@ -22,6 +22,7 @@ import TasksList from "@/src/components/TasksList";
 import { useTheme } from "@/src/providers/ThemeProvider";
 import { useElevation } from "@/src/constants/Themes";
 import { Entypo } from "@expo/vector-icons";
+import { mySync } from "@/src/db/sync";
 
 const Index = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -55,6 +56,7 @@ const Index = () => {
       </SafeAreaView>
 
       <Button title="Change Theme" onPress={onPress} />
+      <Button title="Sync" onPress={mySync} />
     </ThemedView>
   );
 };
