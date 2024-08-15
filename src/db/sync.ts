@@ -5,12 +5,21 @@ import { supabase } from "../lib/supabase";
 export async function mySync() {
   await synchronize({
     database,
+    sendCreatedAsUpdated: true,
     pullChanges: async ({ lastPulledAt, schemaVersion, migration }) => {
-      console.log("pulling changes");
-      return { changes: {}, timestamp: +new Date() };
+      const { data, error } = await supabase.rpc("pull", {
+        last_pulled_at: lastPulledAt,
+        schemaversion: schemaVersion,
+        migration,
+      });
+
+      console.log(JSON.stringify(data));
+      if (error) console.log(error);
+
+      return { changes: data.changes, timestamp: data.timestamp };
     },
-    pushChanges: async ({ changes, lastPulledAt }) => {
-      console.log("pushing changes", changes.tasks.created);
+    pushChanges: async ({ changes }) => {
+      console.log("pushing changes:", changes);
 
       const { error } = await supabase.rpc("push", { changes });
 
