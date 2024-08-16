@@ -1,6 +1,7 @@
 import {
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import {
@@ -49,7 +50,6 @@ export const usePanXGesture = () => {
       const yDiff = Math.abs(
         evt.changedTouches[0].y - initialTouchLocation.value.y
       );
-      console.log(xDiff, yDiff);
       const isHorizontalPanning = xDiff > yDiff;
       if (isHorizontalPanning) {
         state.activate();
@@ -60,6 +60,7 @@ export const usePanXGesture = () => {
       directionCalculated.value = true;
     })
     .onStart((e) => {
+      startX.value = offsetX.value;
       const dragX = e.translationX + startX.value;
       dragDirectionShared.value =
         dragX > 0 ? "right" : dragX < 0 ? "left" : "none";
@@ -68,7 +69,13 @@ export const usePanXGesture = () => {
       handlePanX(e);
     })
     .onEnd(() => {
-      startX.value = offsetX.value;
+      if (offsetX.value > 100) {
+        offsetX.value = withSpring(100);
+      } else if (offsetX.value < -100) {
+        offsetX.value = withSpring(-100);
+      } else {
+        offsetX.value = withTiming(0);
+      }
     });
 
   const panXAnimatedStyles = useAnimatedStyle(() => {
