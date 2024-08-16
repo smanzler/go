@@ -11,6 +11,7 @@ import { router } from "expo-router";
 import { useTheme } from "@/src/providers/ThemeProvider";
 import { LinearGradient } from "expo-linear-gradient";
 import { Entypo } from "@expo/vector-icons";
+import tinycolor from "tinycolor2";
 
 const IndexHeader = () => {
   const { theme } = useTheme();
@@ -35,7 +36,10 @@ const IndexHeader = () => {
           </TouchableOpacity>
         </View>
         <LinearGradient
-          colors={[theme.background, "rgba(255, 255, 255, 0)"]}
+          colors={[
+            theme.background,
+            tinycolor(theme.background).setAlpha(0).toRgbString(),
+          ]}
           style={{ height: 30 }}
         />
       </View>
