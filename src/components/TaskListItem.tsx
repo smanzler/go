@@ -9,6 +9,9 @@ import { useTheme } from "../providers/ThemeProvider";
 import { useElevation } from "../constants/Themes";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
+import Animated from "react-native-reanimated";
+import { usePanXGesture } from "../hooks/usePanXGesture";
+import { GestureDetector } from "react-native-gesture-handler";
 
 export type TaskListItem = {
   task: Task;
@@ -17,6 +20,8 @@ export type TaskListItem = {
 function TaskListItem({ task }: TaskListItem) {
   const { theme } = useTheme();
   const [description, setDescription] = useState(task.description);
+
+  const { panXAnimatedStyles, panXGesture } = usePanXGesture();
 
   useEffect(() => {
     console.log(task.complete);
@@ -41,38 +46,43 @@ function TaskListItem({ task }: TaskListItem) {
   };
 
   return (
-    <View
-      style={[
-        styles.taskContainer,
-        { backgroundColor: theme.background },
-        useElevation(10, theme),
-      ]}
-    >
-      <TextInput
-        style={[
-          styles.taskText,
-          { color: theme.text },
-          task.complete && styles.completedText,
-        ]}
-        multiline
-        blurOnSubmit
-        scrollEnabled={false}
-        onBlur={onBlur}
-        editable={!task.complete}
-        returnKeyType="done"
-        value={description}
-        onChangeText={setDescription}
-      />
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity onPress={onComplete}>
-          <Feather
-            name={task.complete ? "check-circle" : "circle"}
-            color={theme.text}
-            size={24}
+    <Animated.View style={[styles.container]}>
+      <GestureDetector gesture={panXGesture}>
+        <Animated.View
+          style={[
+            styles.taskContainer,
+            { backgroundColor: theme.background },
+            useElevation(10, theme),
+            panXAnimatedStyles,
+          ]}
+        >
+          <TextInput
+            style={[
+              styles.taskText,
+              { color: theme.text },
+              task.complete && styles.completedText,
+            ]}
+            multiline
+            blurOnSubmit
+            scrollEnabled={false}
+            onBlur={onBlur}
+            editable={!task.complete}
+            returnKeyType="done"
+            value={description}
+            onChangeText={setDescription}
           />
-        </TouchableOpacity>
-      </View>
-    </View>
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity onPress={onComplete}>
+              <Feather
+                name={task.complete ? "check-circle" : "circle"}
+                color={theme.text}
+                size={24}
+              />
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      </GestureDetector>
+    </Animated.View>
   );
 }
 
@@ -83,12 +93,17 @@ const enhance = withObservables(["task"], ({ task }: TaskListItem) => ({
 export default enhance(TaskListItem);
 
 const styles = StyleSheet.create({
+  container: {
+    marginVertical: 10,
+    borderRadius: 10,
+    backgroundColor: "pink",
+  },
   taskContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+
     padding: 10,
-    marginVertical: 10,
     borderRadius: 10,
   },
   taskText: {

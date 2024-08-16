@@ -8,6 +8,7 @@ import AuthProvider, { useAuth } from "@/src/providers/AuthProvider";
 import { ThemeProvider, useTheme } from "@/src/providers/ThemeProvider";
 import { useElevation } from "@/src/constants/Themes";
 import tinycolor from "tinycolor2";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -28,11 +29,13 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <ThemeProvider>
-        <RootLayoutNav />
-      </ThemeProvider>
-    </AuthProvider>
+    <GestureHandlerRootView>
+      <AuthProvider>
+        <ThemeProvider>
+          <RootLayoutNav />
+        </ThemeProvider>
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }
 
