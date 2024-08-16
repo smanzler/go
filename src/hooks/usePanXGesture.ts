@@ -10,6 +10,7 @@ import {
   GestureUpdateEvent,
   PanGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
+import * as Haptics from "expo-haptics";
 
 export const usePanXGesture = (
   onDelete: () => void,
@@ -26,9 +27,23 @@ export const usePanXGesture = (
     y: number;
   } | null>(null);
 
+  const hapticFeedback = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+  };
+
   const handlePanX = (e: GestureUpdateEvent<PanGestureHandlerEventPayload>) => {
     "worklet";
     const dragX = startX.value + e.translationX;
+
+    if (
+      (offsetX.value > 100 && dragX <= 100) ||
+      (offsetX.value <= 100 && dragX > 100) ||
+      (offsetX.value < -100 && dragX >= -100) ||
+      (offsetX.value >= -100 && dragX < -100)
+    ) {
+      runOnJS(hapticFeedback)();
+    }
+
     offsetX.value = dragX;
   };
 
