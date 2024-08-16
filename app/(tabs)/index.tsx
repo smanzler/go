@@ -16,7 +16,7 @@ import { ThemedView } from "@/src/components/ThemedView";
 import { ThemedText } from "@/src/components/ThemedText";
 import { ThemedButton } from "@/src/components/ThemedButton";
 import { StatusBar } from "expo-status-bar";
-import { useFocusEffect, router } from "expo-router";
+import { useFocusEffect, router, Stack } from "expo-router";
 import { ThemedIconButton } from "@/src/components/ThemedIconButton";
 import database, { tasksCollection } from "@/src/db";
 import TasksList from "@/src/components/TasksList";
@@ -24,6 +24,8 @@ import { useTheme } from "@/src/providers/ThemeProvider";
 import { useElevation } from "@/src/constants/Themes";
 import { Entypo } from "@expo/vector-icons";
 import { mySync } from "@/src/db/sync";
+import { LinearGradient } from "expo-linear-gradient";
+import IndexHeader from "@/src/components/navigation/IndexHeader";
 
 const Index = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -38,26 +40,15 @@ const Index = () => {
       style={[styles.container, { backgroundColor: theme.background }]}
       nestedScrollEnabled
     >
+      <Stack.Screen
+        options={{
+          header: () => <IndexHeader />,
+          headerTransparent: true,
+        }}
+      />
       <StatusBar hidden />
 
-      <SafeAreaView>
-        <View style={styles.titleContainer}>
-          <ThemedText type="title">Tasks for the day</ThemedText>
-          <TouchableOpacity
-            style={{
-              width: 35,
-              aspectRatio: 1,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onPress={() => router.push("/(modals)/task")}
-          >
-            <Entypo name="plus" size={30} color={theme.primary} />
-          </TouchableOpacity>
-        </View>
-
-        <TasksList />
-      </SafeAreaView>
+      <TasksList />
 
       <Button title="Change Theme" onPress={onPress} />
       <Button title="Sync" onPress={mySync} />
@@ -70,12 +61,8 @@ export default Index;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
+    paddingTop: 130,
     padding: 20,
-  },
-  titleContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
   },
   newTaskBtn: {
     position: "absolute",
