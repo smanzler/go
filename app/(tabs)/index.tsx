@@ -9,6 +9,7 @@ import {
   Button,
   Pressable,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedView } from "@/src/components/ThemedView";
@@ -33,7 +34,10 @@ const Index = () => {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      nestedScrollEnabled
+    >
       <StatusBar hidden />
 
       <SafeAreaView>
@@ -57,7 +61,7 @@ const Index = () => {
 
       <Button title="Change Theme" onPress={onPress} />
       <Button title="Sync" onPress={mySync} />
-    </ThemedView>
+    </ScrollView>
   );
 };
 
