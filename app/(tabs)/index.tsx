@@ -26,10 +26,12 @@ import { Entypo } from "@expo/vector-icons";
 import { mySync } from "@/src/db/sync";
 import { LinearGradient } from "expo-linear-gradient";
 import IndexHeader from "@/src/components/navigation/IndexHeader";
+import { useAuth } from "@/src/providers/AuthProvider";
 
 const Index = () => {
   const [tasks, setTasks] = useState<any[]>([]);
   const { theme, toggleTheme, currentTheme } = useTheme();
+  const { user } = useAuth();
 
   const onPress = () => {
     currentTheme === "light" ? toggleTheme("dark") : toggleTheme("light");
@@ -51,7 +53,7 @@ const Index = () => {
       <TasksList />
 
       <Button title="Change Theme" onPress={onPress} />
-      <Button title="Sync" onPress={mySync} />
+      <Button title="Sync" onPress={() => mySync(user)} />
     </ScrollView>
   );
 };

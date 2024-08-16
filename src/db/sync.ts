@@ -1,8 +1,14 @@
 import { synchronize } from "@nozbe/watermelondb/sync";
 import database from ".";
 import { supabase } from "../lib/supabase";
+import { useAuth } from "../providers/AuthProvider";
+import { User } from "@supabase/supabase-js";
 
-export async function mySync() {
+export async function mySync(user: User | undefined) {
+  if (!user) {
+    console.log("no user");
+    return;
+  }
   await synchronize({
     database,
     sendCreatedAsUpdated: true,
