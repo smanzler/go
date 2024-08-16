@@ -1,4 +1,5 @@
 import {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -10,7 +11,10 @@ import {
   PanGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
 
-export const usePanXGesture = () => {
+export const usePanXGesture = (
+  onDelete: () => void,
+  onComplete: () => void
+) => {
   const offsetX = useSharedValue(0);
   const startX = useSharedValue(0);
   const dragDirectionShared = useSharedValue("none");
@@ -50,7 +54,7 @@ export const usePanXGesture = () => {
       const yDiff = Math.abs(
         evt.changedTouches[0].y - initialTouchLocation.value.y
       );
-      const isHorizontalPanning = xDiff > yDiff;
+      const isHorizontalPanning = xDiff > yDiff * 2;
       if (isHorizontalPanning) {
         state.activate();
       } else {
@@ -70,26 +74,15 @@ export const usePanXGesture = () => {
     })
     .onEnd(() => {
       if (offsetX.value > 100) {
-        offsetX.value = withSpring(100);
+        runOnJS(onComplete)();
       } else if (offsetX.value < -100) {
-        offsetX.value = withSpring(-100);
-      } else {
-        offsetX.value = withTiming(0);
+        runOnJS(onDelete)();
       }
+      offsetX.value = withTiming(0);
     });
 
-  const panXAnimatedStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateX: offsetX.value,
-        },
-      ],
-    };
-  }, []);
-
   return {
-    panXAnimatedStyles,
+    offsetX,
     panXGesture,
   };
 };

@@ -9,7 +9,7 @@ import { useTheme } from "../providers/ThemeProvider";
 import { useElevation } from "../constants/Themes";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import Animated from "react-native-reanimated";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { usePanXGesture } from "../hooks/usePanXGesture";
 import { GestureDetector } from "react-native-gesture-handler";
 
@@ -21,11 +21,9 @@ function TaskListItem({ task }: TaskListItem) {
   const { theme } = useTheme();
   const [description, setDescription] = useState(task.description);
 
-  const { panXAnimatedStyles, panXGesture } = usePanXGesture();
-
-  useEffect(() => {
-    console.log(task.complete);
-  }, [task.complete]);
+  const onDelete = async () => {
+    console.log("delete");
+  };
 
   const onComplete = async () => {
     await database.write(async () => {
@@ -44,6 +42,22 @@ function TaskListItem({ task }: TaskListItem) {
       });
     });
   };
+
+  const { offsetX, panXGesture } = usePanXGesture(onDelete, onComplete);
+
+  const panXAnimatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: offsetX.value,
+        },
+      ],
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log(task.complete);
+  }, [task.complete]);
 
   return (
     <Animated.View style={[styles.container]}>
