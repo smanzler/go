@@ -5,13 +5,22 @@ import { tasksCollection } from "../db";
 import Task from "../models/Task";
 
 import { withObservables } from "@nozbe/watermelondb/react";
+import { useAuth } from "../providers/AuthProvider";
 
 function TasksList({ tasks }: { tasks: Task[] }) {
+  const { user } = useAuth();
+
   return (
     <View>
-      {tasks.map((task) => (
-        <TaskListItem key={task.id} task={task} />
-      ))}
+      {tasks
+        .filter(
+          (task) =>
+            task.userId === user?.id ||
+            (task.userId === null && user?.id === undefined)
+        )
+        .map((task) => (
+          <TaskListItem key={task.id} task={task} />
+        ))}
     </View>
   );
 }
