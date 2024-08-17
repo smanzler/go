@@ -1,6 +1,7 @@
 import {
   runOnJS,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withSpring,
   withTiming,
@@ -14,13 +15,15 @@ import * as Haptics from "expo-haptics";
 
 export const usePanXGesture = (
   onDelete: () => void,
-  onComplete: () => void
+  onComplete: () => void,
+  complete: boolean
 ) => {
   const offsetX = useSharedValue(0);
   const startX = useSharedValue(0);
   const dragDirectionShared = useSharedValue("none");
 
   const directionCalculated = useSharedValue(false);
+  const taskCompleteSharedValue = useSharedValue(false);
 
   const initialTouchLocation = useSharedValue<{
     x: number;
@@ -30,6 +33,12 @@ export const usePanXGesture = (
   const hapticFeedback = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
+
+  useDerivedValue(() => {
+    if (offsetX.value === 0) {
+      taskCompleteSharedValue.value = complete;
+    }
+  });
 
   const handlePanX = (e: GestureUpdateEvent<PanGestureHandlerEventPayload>) => {
     "worklet";
@@ -99,5 +108,6 @@ export const usePanXGesture = (
   return {
     offsetX,
     panXGesture,
+    taskCompleteSharedValue,
   };
 };

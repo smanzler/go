@@ -7,9 +7,12 @@ import { withObservables } from "@nozbe/watermelondb/react";
 import database from "../db";
 import { useTheme } from "../providers/ThemeProvider";
 import { useElevation } from "../constants/Themes";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Entypo, Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import { usePanXGesture } from "../hooks/usePanXGesture";
 import { GestureDetector } from "react-native-gesture-handler";
 
@@ -21,8 +24,14 @@ function TaskListItem({ task }: TaskListItem) {
   const { theme } = useTheme();
   const [description, setDescription] = useState(task.description);
 
+  useEffect(() => {
+    setDescription(task.description);
+  }, [task]);
+
   const onDelete = async () => {
-    console.log("delete");
+    await database.write(async () => {
+      await task.markAsDeleted();
+    });
   };
 
   const onComplete = async () => {
@@ -34,7 +43,6 @@ function TaskListItem({ task }: TaskListItem) {
   };
 
   const onBlur = async () => {
-    console.log("blur", task.description);
     if (task.description === description) return;
     await database.write(async () => {
       await task.update((task) => {
@@ -43,7 +51,50 @@ function TaskListItem({ task }: TaskListItem) {
     });
   };
 
-  const { offsetX, panXGesture } = usePanXGesture(onDelete, onComplete);
+  const { offsetX, panXGesture, taskCompleteSharedValue } = usePanXGesture(
+    onDelete,
+    onComplete,
+    task.complete
+  );
+
+  const hiddenLeftAnimatedStyles = useAnimatedStyle(() => {
+    const scaleValue = interpolate(offsetX.value, [50, 100], [0.5, 1]);
+    const constrainedScaleValue = Math.max(0.5, Math.min(scaleValue, 1));
+
+    return {
+      transform: [
+        {
+          scale: constrainedScaleValue,
+        },
+      ],
+    };
+  }, []);
+
+  const hiddenRightAnimatedStyles = useAnimatedStyle(() => {
+    const scaleValue = interpolate(offsetX.value, [-50, -100], [0.5, 1]);
+    const constrainedScaleValue = Math.max(0.5, Math.min(scaleValue, 1));
+
+    return {
+      transform: [
+        {
+          scale: constrainedScaleValue,
+        },
+      ],
+    };
+  }, []);
+
+  const backgroundAnimatedStyles = useAnimatedStyle(() => {
+    const bgColor =
+      offsetX.value > 0
+        ? taskCompleteSharedValue.value
+          ? "grey"
+          : "green"
+        : offsetX.value < 0
+        ? "red"
+        : "transparent";
+
+    return { backgroundColor: bgColor };
+  }, [offsetX.value, taskCompleteSharedValue.value]);
 
   const panXAnimatedStyles = useAnimatedStyle(() => {
     return {
@@ -55,12 +106,15 @@ function TaskListItem({ task }: TaskListItem) {
     };
   }, []);
 
-  useEffect(() => {
-    console.log(task.complete);
-  }, [task.complete]);
-
   return (
-    <Animated.View style={[styles.container]}>
+    <Animated.View style={[styles.container, backgroundAnimatedStyles]}>
+      <Animated.View style={[styles.iconLeft, hiddenLeftAnimatedStyles]}>
+        <Entypo name={"check"} size={24} />
+      </Animated.View>
+
+      <Animated.View style={[styles.iconRight, hiddenRightAnimatedStyles]}>
+        <FontAwesome6 name="trash-can" size={24} />
+      </Animated.View>
       <GestureDetector gesture={panXGesture}>
         <Animated.View
           style={[
@@ -110,7 +164,6 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
     borderRadius: 10,
-    backgroundColor: "pink",
   },
   taskContainer: {
     flexDirection: "row",
@@ -137,5 +190,23 @@ const styles = StyleSheet.create({
   },
   deleteBtn: {
     backgroundColor: "red",
+  },
+  iconLeft: {
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 20,
+    width: 50,
+  },
+  iconRight: {
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    right: 20,
+    width: 50,
   },
 });
