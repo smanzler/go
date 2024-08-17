@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import Animated, {
   interpolate,
   useAnimatedStyle,
+  useSharedValue,
 } from "react-native-reanimated";
 import { usePanXGesture } from "../hooks/usePanXGesture";
 import { GestureDetector } from "react-native-gesture-handler";
@@ -23,10 +24,12 @@ export type TaskListItem = {
 function TaskListItem({ task }: TaskListItem) {
   const { theme } = useTheme();
   const [description, setDescription] = useState(task.description);
+  const taskCompleteSharedValue = useSharedValue(task.complete);
 
   useEffect(() => {
     setDescription(task.description);
-  }, [task]);
+    taskCompleteSharedValue.value = task.complete;
+  }, [task, task.description, task.complete]);
 
   const onDelete = async () => {
     await database.write(async () => {
@@ -51,7 +54,7 @@ function TaskListItem({ task }: TaskListItem) {
     });
   };
 
-  const { offsetX, panXGesture, taskCompleteSharedValue } = usePanXGesture(
+  const { offsetX, panXGesture } = usePanXGesture(
     onDelete,
     onComplete,
     task.complete
@@ -109,7 +112,7 @@ function TaskListItem({ task }: TaskListItem) {
   return (
     <Animated.View style={[styles.container, backgroundAnimatedStyles]}>
       <Animated.View style={[styles.iconLeft, hiddenLeftAnimatedStyles]}>
-        <Entypo name={"check"} size={24} />
+        <Entypo name={task.complete ? "cross" : "check"} size={24} />
       </Animated.View>
 
       <Animated.View style={[styles.iconRight, hiddenRightAnimatedStyles]}>

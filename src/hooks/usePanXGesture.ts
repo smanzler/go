@@ -23,7 +23,6 @@ export const usePanXGesture = (
   const dragDirectionShared = useSharedValue("none");
 
   const directionCalculated = useSharedValue(false);
-  const taskCompleteSharedValue = useSharedValue(false);
 
   const initialTouchLocation = useSharedValue<{
     x: number;
@@ -33,12 +32,6 @@ export const usePanXGesture = (
   const hapticFeedback = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
-
-  useDerivedValue(() => {
-    if (offsetX.value === 0) {
-      taskCompleteSharedValue.value = complete;
-    }
-  });
 
   const handlePanX = (e: GestureUpdateEvent<PanGestureHandlerEventPayload>) => {
     "worklet";
@@ -98,16 +91,24 @@ export const usePanXGesture = (
     })
     .onEnd(() => {
       if (offsetX.value > 100) {
-        runOnJS(onComplete)();
+        offsetX.value = withTiming(0, {}, () => {
+          if (offsetX.value === 0) {
+            runOnJS(onComplete)();
+          }
+        });
       } else if (offsetX.value < -100) {
-        runOnJS(onDelete)();
+        offsetX.value = withTiming(0, {}, () => {
+          if (offsetX.value === 0) {
+            runOnJS(onDelete)();
+          }
+        });
+      } else {
+        offsetX.value = withTiming(0);
       }
-      offsetX.value = withTiming(0);
     });
 
   return {
     offsetX,
     panXGesture,
-    taskCompleteSharedValue,
   };
 };
