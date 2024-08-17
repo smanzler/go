@@ -30,11 +30,13 @@ import { useAuth } from "@/src/providers/AuthProvider";
 
 const Index = () => {
   const [tasks, setTasks] = useState<any[]>([]);
+  const [syncing, setSyncing] = useState<boolean>(false);
+
   const { theme, toggleTheme, currentTheme } = useTheme();
   const { user } = useAuth();
 
   const onPress = () => {
-    currentTheme === "light" ? toggleTheme("dark") : toggleTheme("light");
+    toggleTheme(currentTheme === "light" ? "dark" : "light");
   };
 
   return (
@@ -44,7 +46,7 @@ const Index = () => {
     >
       <Stack.Screen
         options={{
-          header: () => <IndexHeader />,
+          header: () => <IndexHeader syncing={syncing} />,
           headerTransparent: true,
         }}
       />
@@ -53,7 +55,7 @@ const Index = () => {
       <TasksList />
 
       <Button title="Change Theme" onPress={onPress} />
-      <Button title="Sync" onPress={() => mySync(user)} />
+      <Button title="Sync" onPress={() => mySync(user, setSyncing)} />
     </ScrollView>
   );
 };

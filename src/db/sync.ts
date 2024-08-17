@@ -4,11 +4,17 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../providers/AuthProvider";
 import { User } from "@supabase/supabase-js";
 
-export async function mySync(user: User | undefined) {
+export async function mySync(
+  user: User | undefined,
+  setSyncing: React.Dispatch<React.SetStateAction<boolean>>
+) {
   if (!user) {
     console.log("no user");
     return;
   }
+
+  setSyncing(true);
+
   await synchronize({
     database,
     sendCreatedAsUpdated: true,
@@ -20,7 +26,7 @@ export async function mySync(user: User | undefined) {
         migration,
       });
 
-      console.log(JSON.stringify(data));
+      console.log("pull", JSON.stringify(data));
       if (error) console.log(error);
 
       return { changes: data.changes, timestamp: data.timestamp };
@@ -33,4 +39,6 @@ export async function mySync(user: User | undefined) {
       if (error) console.log(error);
     },
   });
+
+  setSyncing(false);
 }
