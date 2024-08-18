@@ -87,7 +87,7 @@ function TaskListItem({ task }: TaskListItem) {
       offsetX.value > 0
         ? taskCompleteSharedValue.value
           ? "grey"
-          : "green"
+          : "#50C878"
         : offsetX.value < 0
         ? "red"
         : "transparent";
@@ -108,11 +108,15 @@ function TaskListItem({ task }: TaskListItem) {
   return (
     <Animated.View style={[styles.container, backgroundAnimatedStyles]}>
       <Animated.View style={[styles.iconLeft, hiddenLeftAnimatedStyles]}>
-        <Entypo name={task.complete ? "cross" : "check"} size={24} />
+        <Entypo
+          name={task.complete ? "cross" : "check"}
+          size={24}
+          color="white"
+        />
       </Animated.View>
 
       <Animated.View style={[styles.iconRight, hiddenRightAnimatedStyles]}>
-        <FontAwesome6 name="trash-can" size={24} />
+        <FontAwesome6 name="trash-can" size={24} color="white" />
       </Animated.View>
       <GestureDetector gesture={panXGesture}>
         <Animated.View
@@ -197,7 +201,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     left: 20,
-    width: 50,
+    width: 20,
   },
   iconRight: {
     justifyContent: "center",
@@ -206,6 +210,6 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     right: 20,
-    width: 50,
+    width: 20,
   },
 });

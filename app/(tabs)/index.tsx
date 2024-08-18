@@ -56,6 +56,7 @@ const Index = () => {
 
       <Button title="Change Theme" onPress={onPress} />
       <Button title="Sync" onPress={() => mySync(user, setSyncing)} />
+      <View style={{ height: 300 }} />
     </ScrollView>
   );
 };

@@ -6,8 +6,6 @@ import { useElevation } from "@/src/constants/Themes";
 import { TabBar } from "@/src/components/navigation/TabBar";
 
 export default function TabLayout() {
-  const { theme } = useTheme();
-
   return (
     <Tabs
       tabBar={(props) => <TabBar {...props} />}

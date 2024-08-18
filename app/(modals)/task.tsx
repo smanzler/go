@@ -1,14 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Keyboard, StyleSheet, TextInput, View } from "react-native";
+import {
+  Keyboard,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { ThemedButton } from "@/src/components/ThemedButton";
 import { router } from "expo-router";
 import { BlurView } from "expo-blur";
 import { ThemedIconButton } from "@/src/components/ThemedIconButton";
 import database, { tasksCollection } from "@/src/db";
 import { useTheme } from "@/src/providers/ThemeProvider";
-import { useElevation } from "@/src/constants/Themes";
+import { addTint, useElevation } from "@/src/constants/Themes";
 import tinycolor from "tinycolor2";
 import { useAuth } from "@/src/providers/AuthProvider";
+import { Entypo } from "@expo/vector-icons";
 
 const TaskScreen = () => {
   const [description, setDescription] = useState("");
@@ -37,42 +45,21 @@ const TaskScreen = () => {
   };
 
   return (
-    <BlurView intensity={50} style={styles.container}>
-      <ThemedIconButton
-        style={[
-          styles.exitBtn,
-          !theme.useShadow && {
-            backgroundColor: tinycolor(theme.background)
-              .lighten(20)
-              .toHexString(),
-          },
-        ]}
-        onPress={() => router.back()}
-        exitBtn
-      />
+    <BlurView intensity={80} style={styles.container}>
+      <TouchableOpacity style={[styles.exitBtn]} onPress={() => router.back()}>
+        <Entypo name="cross" color={theme.primary} size={40} />
+      </TouchableOpacity>
 
       <TextInput
         ref={inputRef}
-        style={[styles.input, { color: theme.text }]}
-        placeholderTextColor={"grey"}
+        style={[styles.input]}
+        placeholderTextColor={"#d3d3d3"}
         placeholder="Enter something you'd like to do"
         value={description}
         onChangeText={setDescription}
+        onSubmitEditing={saveTask}
+        returnKeyType="done"
       />
-      <ThemedButton
-        style={[
-          styles.saveBtn,
-          !theme.useShadow && {
-            backgroundColor: tinycolor(theme.background)
-              .lighten(20)
-              .toHexString(),
-          },
-        ]}
-        onPress={saveTask}
-        cancelBtn
-      >
-        Save Task
-      </ThemedButton>
     </BlurView>
   );
 };
@@ -83,30 +70,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 150,
+    paddingTop: 100,
   },
   input: {
-    height: 40,
-    width: "80%",
-    borderColor: "white",
-    borderWidth: 1,
-    marginBottom: 20,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-  },
-  saveBtn: {
-    marginBottom: 10,
-    padding: 5,
-    paddingHorizontal: 20,
-    borderRadius: 25,
+    fontSize: 20,
+    paddingBottom: 100,
+    color: "white",
   },
   exitBtn: {
+    justifyContent: "center",
+    alignItems: "center",
     position: "absolute",
-    top: 40,
-    left: 10,
+    top: 30,
+    left: 30,
 
-    width: 50,
+    width: 40,
     aspectRatio: 1,
-    borderRadius: 25,
   },
 });
