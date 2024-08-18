@@ -15,6 +15,7 @@ import { supabase } from "@/src/lib/supabase";
 import { useElevation } from "@/src/constants/Themes";
 import { useTheme } from "@/src/providers/ThemeProvider";
 import RemoteImage from "@/src/components/RemoteImage";
+import SettingsListView from "@/src/components/SettingsListView";
 
 const Profile = () => {
   const { isAuthenticated, user } = useAuth();
@@ -52,6 +53,8 @@ const Profile = () => {
         </View>
       </View>
       <Button title="Log out" onPress={() => supabase.auth.signOut()}></Button>
+
+      <SettingsListView settings={["Profile", "Theme", "About"]} />
     </ScrollView>
   );
 };
