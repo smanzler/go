@@ -60,6 +60,9 @@ function RootLayoutNav() {
           headerShown: false,
         }}
       />
+      <Stack.Screen name="(settings)/theme" options={{}} />
+      <Stack.Screen name="(settings)/profile" options={{}} />
+      <Stack.Screen name="(settings)/about" options={{}} />
       <Stack.Screen
         name="(auth)/login"
         options={{

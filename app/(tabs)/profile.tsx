@@ -54,7 +54,7 @@ const Profile = () => {
       </View>
       <Button title="Log out" onPress={() => supabase.auth.signOut()}></Button>
 
-      <SettingsListView settings={["Profile", "Theme", "About"]} />
+      <SettingsListView settings={["profile", "theme", "about"]} />
     </ScrollView>
   );
 };

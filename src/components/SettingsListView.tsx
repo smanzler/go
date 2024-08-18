@@ -1,10 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { useElevation } from "../constants/Themes";
 import { useTheme } from "../providers/ThemeProvider";
 import { AntDesign } from "@expo/vector-icons";
+import { router } from "expo-router";
 
-const SettingsListView = ({ settings }: { settings: string[] }) => {
+export type Setting = "theme" | "about" | "profile";
+
+const SettingsListView = ({ settings }: { settings: Setting[] }) => {
   const { theme } = useTheme();
 
   const length = settings.length - 1;
@@ -12,9 +15,15 @@ const SettingsListView = ({ settings }: { settings: string[] }) => {
   return (
     <View style={[styles.container, useElevation(10, theme)]}>
       {settings.map((setting, index) => (
-        <View key={index} style={styles.row}>
+        <TouchableOpacity
+          key={index}
+          style={styles.row}
+          onPress={() => router.navigate(`/(settings)/${setting}`)}
+        >
           <View style={styles.flex}>
-            <Text style={[styles.text, { color: theme.text }]}>{setting}</Text>
+            <Text style={[styles.text, { color: theme.text }]}>
+              {setting.charAt(0).toUpperCase() + setting.slice(1)}
+            </Text>
             <AntDesign
               name="right"
               style={{ alignSelf: "center" }}
@@ -23,8 +32,10 @@ const SettingsListView = ({ settings }: { settings: string[] }) => {
             />
           </View>
 
-          <View style={[styles.border]} />
-        </View>
+          {/* {length !== index && (
+            <View style={[styles.border, { backgroundColor: theme.text }]} />
+          )} */}
+        </TouchableOpacity>
       ))}
     </View>
   );
@@ -51,7 +62,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     marginHorizontal: 20,
     width: "100%",
-    height: StyleSheet.hairlineWidth,
+    height: 1,
   },
   text: {
     fontSize: 18,
