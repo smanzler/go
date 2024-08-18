@@ -27,6 +27,7 @@ import { mySync } from "@/src/db/sync";
 import { LinearGradient } from "expo-linear-gradient";
 import IndexHeader from "@/src/components/navigation/IndexHeader";
 import { useAuth } from "@/src/providers/AuthProvider";
+import Animated, { LinearTransition } from "react-native-reanimated";
 
 const Index = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -54,9 +55,11 @@ const Index = () => {
 
       <TasksList />
 
-      <Button title="Change Theme" onPress={onPress} />
-      <Button title="Sync" onPress={() => mySync(user, setSyncing)} />
-      <View style={{ height: 300 }} />
+      <Animated.View layout={LinearTransition}>
+        <Button title="Change Theme" onPress={onPress} />
+        <Button title="Sync" onPress={() => mySync(user, setSyncing)} />
+        <View style={{ height: 300 }} />
+      </Animated.View>
     </ScrollView>
   );
 };

@@ -10,7 +10,10 @@ import { useElevation } from "../constants/Themes";
 import { Entypo, Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import Animated, {
+  FadeInLeft,
+  FadeOutLeft,
   interpolate,
+  LinearTransition,
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
@@ -89,7 +92,7 @@ function TaskListItem({ task }: TaskListItem) {
           ? "grey"
           : "#50C878"
         : offsetX.value < 0
-        ? "red"
+        ? "#DC143C"
         : "transparent";
 
     return { backgroundColor: bgColor };
@@ -99,14 +102,19 @@ function TaskListItem({ task }: TaskListItem) {
     return {
       transform: [
         {
-          translateX: offsetX.value,
+          translateX: offsetX.value * 0.75,
         },
       ],
     };
   }, []);
 
   return (
-    <Animated.View style={[styles.container, backgroundAnimatedStyles]}>
+    <Animated.View
+      style={[styles.container, backgroundAnimatedStyles]}
+      entering={FadeInLeft}
+      exiting={FadeOutLeft}
+      layout={LinearTransition}
+    >
       <Animated.View style={[styles.iconLeft, hiddenLeftAnimatedStyles]}>
         <Entypo
           name={task.complete ? "cross" : "check"}
