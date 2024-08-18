@@ -54,11 +54,7 @@ function TaskListItem({ task }: TaskListItem) {
     });
   };
 
-  const { offsetX, panXGesture } = usePanXGesture(
-    onDelete,
-    onComplete,
-    task.complete
-  );
+  const { offsetX, panXGesture } = usePanXGesture(onDelete, onComplete);
 
   const hiddenLeftAnimatedStyles = useAnimatedStyle(() => {
     const scaleValue = interpolate(offsetX.value, [50, 100], [0.5, 1]);

@@ -15,8 +15,7 @@ import * as Haptics from "expo-haptics";
 
 export const usePanXGesture = (
   onDelete: () => void,
-  onComplete: () => void,
-  complete: boolean
+  onComplete: () => void
 ) => {
   const offsetX = useSharedValue(0);
   const startX = useSharedValue(0);
