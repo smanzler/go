@@ -9,6 +9,7 @@ import { ThemeProvider, useTheme } from "@/src/providers/ThemeProvider";
 import { useElevation } from "@/src/constants/Themes";
 import tinycolor from "tinycolor2";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import SettingsHeader from "@/src/components/SettingsHeader";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -60,9 +61,18 @@ function RootLayoutNav() {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="(settings)/theme" options={{}} />
-      <Stack.Screen name="(settings)/profile" options={{}} />
-      <Stack.Screen name="(settings)/about" options={{}} />
+      <Stack.Screen
+        name="(settings)/theme"
+        options={{ header: () => <SettingsHeader /> }}
+      />
+      <Stack.Screen
+        name="(settings)/profile"
+        options={{ header: () => <SettingsHeader /> }}
+      />
+      <Stack.Screen
+        name="(settings)/about"
+        options={{ header: () => <SettingsHeader /> }}
+      />
       <Stack.Screen
         name="(auth)/login"
         options={{
