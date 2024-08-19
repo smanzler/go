@@ -16,6 +16,7 @@ import { useElevation } from "@/src/constants/Themes";
 import { useTheme } from "@/src/providers/ThemeProvider";
 import RemoteImage from "@/src/components/RemoteImage";
 import SettingsListView from "@/src/components/SettingsListView";
+import { AntDesign } from "@expo/vector-icons";
 
 const Profile = () => {
   const { isAuthenticated, user } = useAuth();
@@ -54,7 +55,46 @@ const Profile = () => {
       </View>
       <Button title="Log out" onPress={() => supabase.auth.signOut()}></Button>
 
-      <SettingsListView settings={["profile", "theme", "about"]} />
+      <SettingsListView
+        settings={[
+          {
+            name: "Profile",
+            route: "profile",
+            rightIcon: () => (
+              <AntDesign
+                name="right"
+                style={{ alignSelf: "center" }}
+                size={18}
+                color={theme.text}
+              />
+            ),
+          },
+          {
+            name: "Theme",
+            route: "theme",
+            rightIcon: () => (
+              <AntDesign
+                name="right"
+                style={{ alignSelf: "center" }}
+                size={18}
+                color={theme.text}
+              />
+            ),
+          },
+          {
+            name: "About",
+            route: "about",
+            rightIcon: () => (
+              <AntDesign
+                name="right"
+                style={{ alignSelf: "center" }}
+                size={18}
+                color={theme.text}
+              />
+            ),
+          },
+        ]}
+      />
     </ScrollView>
   );
 };

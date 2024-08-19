@@ -2,41 +2,48 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { useElevation } from "../constants/Themes";
 import { useTheme } from "../providers/ThemeProvider";
-import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
 
-export type Setting = "theme" | "about" | "profile";
+export type Setting = {
+  name: string;
+  route?: "theme" | "about" | "profile";
+  rightIcon?: () => JSX.Element;
+};
 
 const SettingsListView = ({ settings }: { settings: Setting[] }) => {
   const { theme } = useTheme();
 
-  const length = settings.length - 1;
-
   return (
     <View style={[styles.container, useElevation(10, theme)]}>
-      {settings.map((setting, index) => (
-        <TouchableOpacity
-          key={index}
-          style={styles.row}
-          onPress={() => router.navigate(`/(settings)/${setting}`)}
-        >
-          <View style={styles.flex}>
-            <Text style={[styles.text, { color: theme.text }]}>
-              {setting.charAt(0).toUpperCase() + setting.slice(1)}
-            </Text>
-            <AntDesign
-              name="right"
-              style={{ alignSelf: "center" }}
-              size={18}
-              color={theme.text}
-            />
+      {settings.map((setting, index) =>
+        setting.route ? (
+          // Render TouchableOpacity if route exists
+          <TouchableOpacity
+            key={index}
+            style={styles.row}
+            onPress={() => {
+              if (setting.route)
+                router.navigate(`/(settings)/${setting.route}`);
+            }}
+          >
+            <View style={styles.flex}>
+              <Text style={[styles.text, { color: theme.text }]}>
+                {setting.name.charAt(0).toUpperCase() + setting.name.slice(1)}
+              </Text>
+              {setting.rightIcon && setting.rightIcon()}
+            </View>
+          </TouchableOpacity>
+        ) : (
+          <View key={index} style={styles.row}>
+            <View style={styles.flex}>
+              <Text style={[styles.text, { color: theme.text }]}>
+                {setting.name.charAt(0).toUpperCase() + setting.name.slice(1)}
+              </Text>
+              {setting.rightIcon && setting.rightIcon()}
+            </View>
           </View>
-
-          {/* {length !== index && (
-            <View style={[styles.border, { backgroundColor: theme.text }]} />
-          )} */}
-        </TouchableOpacity>
-      ))}
+        )
+      )}
     </View>
   );
 };
@@ -51,6 +58,7 @@ const styles = StyleSheet.create({
   flex: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   row: {
     justifyContent: "center",
