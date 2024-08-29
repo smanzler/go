@@ -54,6 +54,10 @@ function TaskListItem({ task }: TaskListItem) {
     taskCompleteSharedValue.value = task.complete;
   }, [task, task.description, task.complete]);
 
+  useEffect(() => {
+    textColor.value = theme.text;
+  }, [theme]);
+
   const fillerAnimatedStyles = useAnimatedStyle(() => {
     const width = interpolate(progress.value, [0, 1], [0, 100]);
     return {
@@ -191,7 +195,17 @@ function TaskListItem({ task }: TaskListItem) {
             panXAnimatedStyles,
           ]}
         >
-          <Animated.View style={[styles.filler, fillerAnimatedStyles]} />
+          <View
+            style={{
+              position: "absolute",
+              height: "100%",
+              width: "100%",
+              borderRadius: 10,
+              overflow: "hidden",
+            }}
+          >
+            <Animated.View style={[styles.filler, fillerAnimatedStyles]} />
+          </View>
 
           <AnimatedTextInput
             style={[styles.taskText, colorAnimatedStyles]}
