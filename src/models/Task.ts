@@ -13,6 +13,7 @@ export default class Task extends Model {
   @text("description") description: any;
   @field("complete") complete: any;
   @text("image") image: any;
+  @date("due_at") dueAt: any;
 
   @nochange @field("user_id") userId: any;
 
