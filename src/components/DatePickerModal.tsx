@@ -5,28 +5,22 @@ import { useTheme } from "../providers/ThemeProvider";
 import { BlurView } from "expo-blur";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ThemedText } from "./ThemedText";
+import { useElevation } from "../constants/Themes";
 
 type Props = {
   date: Date | null;
   setDate: React.Dispatch<React.SetStateAction<Date | null>>;
   visible: boolean;
-  setVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  onExit: () => void | Promise<void>;
 };
 
-const DatePickerModal = ({ date, setDate, visible, setVisible }: Props) => {
+const DatePickerModal = ({ date, setDate, visible, onExit }: Props) => {
   const { theme } = useTheme();
 
   return (
     <Modal transparent animationType="fade" visible={visible}>
       <BlurView intensity={50} style={styles.container}>
-        <View
-          style={[
-            styles.calendar,
-            {
-              backgroundColor: theme.background,
-            },
-          ]}
-        >
+        <View style={[styles.calendar, useElevation(10, theme)]}>
           <DateTimePicker
             date={date}
             mode="single"
@@ -40,10 +34,24 @@ const DatePickerModal = ({ date, setDate, visible, setVisible }: Props) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => setVisible(false)}
-          style={[styles.btn, { backgroundColor: theme.primary }]}
+          onPress={onExit}
+          style={[
+            styles.btn,
+            useElevation(20, theme),
+            { backgroundColor: theme.primary },
+          ]}
         >
           <ThemedText>Save</ThemedText>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            setDate(null);
+            onExit();
+          }}
+          style={[styles.btn, useElevation(10, theme)]}
+        >
+          <ThemedText>Remove Date</ThemedText>
         </TouchableOpacity>
       </BlurView>
     </Modal>
@@ -68,7 +76,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
     width: 300,
-    marginBottom: 20,
+    marginBottom: 10,
     alignItems: "center",
   },
 });

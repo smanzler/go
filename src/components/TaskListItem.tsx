@@ -33,6 +33,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { usePanXGesture } from "../hooks/usePanXGesture";
 import { GestureDetector } from "react-native-gesture-handler";
+import DatePickerModal from "./DatePickerModal";
 
 export type TaskListItem = {
   task: Task;
@@ -44,6 +45,8 @@ function TaskListItem({ task }: TaskListItem) {
   const [animating, setAnimating] = useState(false);
   const [isPastDue, setIsPastDue] = useState(false);
   const [relativeTime, setRelativeTime] = useState<string>();
+  const [dateModalVisible, setDateModalVisible] = useState(false);
+  const [date, setDate] = useState<Date | null>(task.dueAt);
 
   const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
   const AnimatedIcon = Animated.createAnimatedComponent(Feather);
@@ -67,10 +70,11 @@ function TaskListItem({ task }: TaskListItem) {
   }, [theme, isPastDue]);
 
   useEffect(() => {
+    console.log(task.dueAt);
     if (task.dueAt) {
       setRelativeTime(getRelativeTimeDifference(task.dueAt));
     }
-  }, []);
+  }, [task.dueAt]);
 
   const fillerAnimatedStyles = useAnimatedStyle(() => {
     const width = interpolate(progress.value, [0, 1], [0, 100]);
@@ -137,7 +141,20 @@ function TaskListItem({ task }: TaskListItem) {
     });
   };
 
-  const changeDate = () => {};
+  const onExit = async () => {
+    if (task.dueAt === date) return;
+    await database.write(async () => {
+      await task.update((task) => {
+        task.dueAt = date;
+      });
+    });
+
+    setDateModalVisible(false);
+  };
+
+  const changeDate = () => {
+    setDateModalVisible(true);
+  };
 
   const { offsetX, panXGesture } = usePanXGesture(onDelete, onComplete);
 
@@ -272,6 +289,14 @@ function TaskListItem({ task }: TaskListItem) {
               animatedProps={animatedProps as any}
             />
             <View style={styles.buttonsContainer}>
+              <TouchableOpacity onPress={changeDate} disabled={animating}>
+                <AnimatedIcon
+                  name="calendar"
+                  style={colorAnimatedStyles}
+                  size={24}
+                />
+              </TouchableOpacity>
+
               <TouchableOpacity onPress={onComplete} disabled={animating}>
                 <AnimatedIcon
                   name={task.complete ? "check-circle" : "circle"}
@@ -282,16 +307,21 @@ function TaskListItem({ task }: TaskListItem) {
             </View>
           </View>
           {task.dueAt && (
-            <TouchableOpacity onPress={changeDate}>
-              <Animated.Text style={[styles.dueText, tintColorAnimatedStyles]}>
-                {isPastDue
-                  ? `${relativeTime} past due`
-                  : `Due in ${relativeTime}`}
-              </Animated.Text>
-            </TouchableOpacity>
+            <Animated.Text style={[styles.dueText, tintColorAnimatedStyles]}>
+              {isPastDue
+                ? `${relativeTime} past due`
+                : `Due in ${relativeTime}`}
+            </Animated.Text>
           )}
         </Animated.View>
       </GestureDetector>
+
+      <DatePickerModal
+        date={date}
+        setDate={setDate}
+        visible={dateModalVisible}
+        onExit={onExit}
+      />
     </Animated.View>
   );
 }
@@ -330,6 +360,8 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   buttonsContainer: {
+    flexDirection: "row",
+    gap: 5,
     margin: 10,
   },
   deleteBtn: {

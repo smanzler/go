@@ -120,7 +120,7 @@ const TaskScreen = () => {
           date={date}
           setDate={setDate}
           visible={dateModalVisible}
-          setVisible={setDateModalVisible}
+          onExit={() => setDateModalVisible(false)}
         />
       </BlurView>
     </TouchableWithoutFeedback>
