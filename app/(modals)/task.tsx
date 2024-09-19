@@ -19,13 +19,15 @@ import { useTheme } from "@/src/providers/ThemeProvider";
 import { addTint, useElevation } from "@/src/constants/Themes";
 import tinycolor from "tinycolor2";
 import { useAuth } from "@/src/providers/AuthProvider";
-import { Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import DateTimePicker from "react-native-ui-datepicker";
 import { ThemedText } from "@/src/components/ThemedText";
+import DatePickerModal from "@/src/components/DatePickerModal";
 
 const TaskScreen = () => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState<Date | null>(null);
+  const [dateModalVisible, setDateModalVisible] = useState(false);
 
   const inputRef = useRef<TextInput>(null);
 
@@ -71,15 +73,12 @@ const TaskScreen = () => {
   };
 
   const addDate = () => {
-    date ? setDate(null) : setDate(new Date());
+    date ? setDate(null) : (setDate(new Date()), setDateModalVisible(true));
   };
 
   return (
-    <BlurView intensity={80} style={{ flex: 1 }}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{ alignItems: "center" }}
-      >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <BlurView intensity={80} style={styles.container}>
         <TextInput
           ref={inputRef}
           style={[styles.input]}
@@ -98,23 +97,6 @@ const TaskScreen = () => {
           <ThemedText>{date ? "Remove date -" : "Add date +"}</ThemedText>
         </TouchableOpacity>
 
-        {date && (
-          <View
-            style={[
-              styles.calendar,
-              {
-                backgroundColor: theme.background,
-              },
-            ]}
-          >
-            <DateTimePicker
-              date={date}
-              mode="single"
-              onChange={(params: any) => setDate(params.date)}
-            />
-          </View>
-        )}
-
         <TouchableOpacity
           onPress={saveTask}
           style={[
@@ -126,12 +108,22 @@ const TaskScreen = () => {
         >
           <ThemedText>Save Task</ThemedText>
         </TouchableOpacity>
-      </ScrollView>
 
-      <TouchableOpacity style={[styles.exitBtn]} onPress={() => router.back()}>
-        <Entypo name="cross" color={theme.primary} size={40} />
-      </TouchableOpacity>
-    </BlurView>
+        <TouchableOpacity
+          style={[styles.exitBtn]}
+          onPress={() => router.back()}
+        >
+          <AntDesign name="left" color={theme.primary} size={30} />
+        </TouchableOpacity>
+
+        <DatePickerModal
+          date={date}
+          setDate={setDate}
+          visible={dateModalVisible}
+          setVisible={setDateModalVisible}
+        />
+      </BlurView>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -140,19 +132,20 @@ export default TaskScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 100,
+    paddingTop: 50,
+    alignItems: "center",
   },
   input: {
     fontSize: 20,
     color: "white",
-    marginBottom: 30,
+    marginBottom: 50,
   },
   exitBtn: {
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    top: 30,
-    left: 30,
+    top: 10,
+    left: 10,
 
     width: 40,
     aspectRatio: 1,
@@ -161,13 +154,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
     width: 300,
-    marginTop: 20,
+    marginBottom: 20,
     alignItems: "center",
-  },
-  calendar: {
-    width: 300,
-    borderRadius: 15,
-    padding: 10,
-    marginTop: 20,
   },
 });
