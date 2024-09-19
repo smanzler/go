@@ -4,6 +4,7 @@ import {
   Keyboard,
   ScrollView,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -19,7 +20,8 @@ import { addTint, useElevation } from "@/src/constants/Themes";
 import tinycolor from "tinycolor2";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { Entypo } from "@expo/vector-icons";
-import DatePicker from "react-native-date-picker";
+import DateTimePicker from "react-native-ui-datepicker";
+import { ThemedText } from "@/src/components/ThemedText";
 
 const TaskScreen = () => {
   const [description, setDescription] = useState("");
@@ -35,6 +37,7 @@ const TaskScreen = () => {
 
   useEffect(() => {
     let currentIndex = 0;
+    setPlaceholderText("");
 
     const typeCharacter = () => {
       if (currentIndex < fullPlaceholderText.length) {
@@ -46,10 +49,6 @@ const TaskScreen = () => {
 
     typeCharacter();
   }, []);
-
-  useEffect(() => {
-    console.log(date);
-  }, [date]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -92,9 +91,41 @@ const TaskScreen = () => {
           returnKeyType="done"
         />
 
-        <Button title={date ? "Remove date" : "Add date"} onPress={addDate} />
+        <TouchableOpacity
+          onPress={addDate}
+          style={[styles.btn, { backgroundColor: theme.primary }]}
+        >
+          <ThemedText>{date ? "Remove date -" : "Add date +"}</ThemedText>
+        </TouchableOpacity>
 
-        {date && <DatePicker date={date} onDateChange={setDate} />}
+        {date && (
+          <View
+            style={[
+              styles.calendar,
+              {
+                backgroundColor: theme.background,
+              },
+            ]}
+          >
+            <DateTimePicker
+              date={date}
+              mode="single"
+              onChange={(params: any) => setDate(params.date)}
+            />
+          </View>
+        )}
+
+        <TouchableOpacity
+          onPress={saveTask}
+          style={[
+            styles.btn,
+            {
+              backgroundColor: theme.background,
+            },
+          ]}
+        >
+          <ThemedText>Save Task</ThemedText>
+        </TouchableOpacity>
       </ScrollView>
 
       <TouchableOpacity style={[styles.exitBtn]} onPress={() => router.back()}>
@@ -114,7 +145,7 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 20,
     color: "white",
-    paddingBottom: 20,
+    marginBottom: 30,
   },
   exitBtn: {
     justifyContent: "center",
@@ -125,5 +156,18 @@ const styles = StyleSheet.create({
 
     width: 40,
     aspectRatio: 1,
+  },
+  btn: {
+    padding: 10,
+    borderRadius: 20,
+    width: 300,
+    marginTop: 20,
+    alignItems: "center",
+  },
+  calendar: {
+    width: 300,
+    borderRadius: 15,
+    padding: 10,
+    marginTop: 20,
   },
 });

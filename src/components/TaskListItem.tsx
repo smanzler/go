@@ -14,7 +14,7 @@ import Task from "../models/Task";
 import { withObservables } from "@nozbe/watermelondb/react";
 import database from "../db";
 import { useTheme } from "../providers/ThemeProvider";
-import { useElevation } from "../constants/Themes";
+import { addTint, useElevation } from "../constants/Themes";
 import { Entypo, Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import Animated, {
@@ -42,6 +42,8 @@ function TaskListItem({ task }: TaskListItem) {
   const { theme } = useTheme();
   const descriptionSharedValue = useSharedValue<string>(task.description);
   const [animating, setAnimating] = useState(false);
+  const [isPastDue, setIsPastDue] = useState(false);
+  const [relativeTime, setRelativeTime] = useState<string>();
 
   const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
   const AnimatedIcon = Animated.createAnimatedComponent(Feather);
@@ -49,6 +51,7 @@ function TaskListItem({ task }: TaskListItem) {
   const taskCompleteSharedValue = useSharedValue(task.complete);
   const progress = useSharedValue(task.complete ? 1 : 0);
   const textColor = useSharedValue(theme.text);
+  const tintColor = useSharedValue(addTint(theme.text, !theme.useShadow, 50));
 
   useEffect(() => {
     taskCompleteSharedValue.value = task.complete;
@@ -56,7 +59,18 @@ function TaskListItem({ task }: TaskListItem) {
 
   useEffect(() => {
     textColor.value = theme.text;
-  }, [theme]);
+    tintColor.value = addTint(
+      isPastDue ? "red" : theme.text,
+      !theme.useShadow,
+      isPastDue ? 10 : 50
+    );
+  }, [theme, isPastDue]);
+
+  useEffect(() => {
+    if (task.dueAt) {
+      setRelativeTime(getRelativeTimeDifference(task.dueAt));
+    }
+  }, []);
 
   const fillerAnimatedStyles = useAnimatedStyle(() => {
     const width = interpolate(progress.value, [0, 1], [0, 100]);
@@ -76,6 +90,18 @@ function TaskListItem({ task }: TaskListItem) {
       color,
     };
   }, [textColor.value]);
+
+  const tintColorAnimatedStyles = useAnimatedStyle(() => {
+    const color = interpolateColor(
+      progress.value,
+      [0, 1],
+      [tintColor.value, "rgba(0, 0, 0, 0.85)"]
+    );
+
+    return {
+      color,
+    };
+  }, [tintColor.value]);
 
   const onDelete = async () => {
     await database.write(async () => {
@@ -110,6 +136,8 @@ function TaskListItem({ task }: TaskListItem) {
       });
     });
   };
+
+  const changeDate = () => {};
 
   const { offsetX, panXGesture } = usePanXGesture(onDelete, onComplete);
 
@@ -168,6 +196,28 @@ function TaskListItem({ task }: TaskListItem) {
     };
   });
 
+  const getRelativeTimeDifference = (endDate: Date) => {
+    const startDate = new Date();
+    const diffMs = endDate.getTime() - startDate.getTime();
+    setIsPastDue(diffMs < 0);
+    const absDiffMs = Math.abs(diffMs);
+    const diffSeconds = Math.floor(absDiffMs / 1000);
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    const diffMonths = Math.floor(diffDays / 30);
+    const diffYears = Math.floor(diffMonths / 12);
+
+    if (diffYears > 0) return `${diffYears} year${diffYears > 1 ? "s" : ""}`;
+    if (diffMonths > 0)
+      return `${diffMonths} month${diffMonths > 1 ? "s" : ""}`;
+    if (diffDays > 0) return `${diffDays} day${diffDays > 1 ? "s" : ""}`;
+    if (diffHours > 0) return `${diffHours} hour${diffHours > 1 ? "s" : ""}`;
+    if (diffMinutes > 0)
+      return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""}`;
+    return `${diffSeconds} second${diffSeconds > 1 ? "s" : ""}`;
+  };
+
   return (
     <Animated.View
       style={[styles.container, backgroundAnimatedStyles]}
@@ -206,30 +256,40 @@ function TaskListItem({ task }: TaskListItem) {
           >
             <Animated.View style={[styles.filler, fillerAnimatedStyles]} />
           </View>
-
-          <AnimatedTextInput
-            style={[styles.taskText, colorAnimatedStyles]}
-            multiline
-            blurOnSubmit
-            scrollEnabled={false}
-            onBlur={onBlur}
-            editable={!task.complete && !animating}
-            returnKeyType="done"
-            defaultValue={descriptionSharedValue.value}
-            onChangeText={(text) => {
-              descriptionSharedValue.value = text;
-            }}
-            animatedProps={animatedProps as any}
-          />
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity onPress={onComplete} disabled={animating}>
-              <AnimatedIcon
-                name={task.complete ? "check-circle" : "circle"}
-                style={colorAnimatedStyles}
-                size={24}
-              />
-            </TouchableOpacity>
+          <View style={styles.topContainer}>
+            <AnimatedTextInput
+              style={[styles.taskText, colorAnimatedStyles]}
+              multiline
+              blurOnSubmit
+              scrollEnabled={false}
+              onBlur={onBlur}
+              editable={!task.complete && !animating}
+              returnKeyType="done"
+              defaultValue={descriptionSharedValue.value}
+              onChangeText={(text) => {
+                descriptionSharedValue.value = text;
+              }}
+              animatedProps={animatedProps as any}
+            />
+            <View style={styles.buttonsContainer}>
+              <TouchableOpacity onPress={onComplete} disabled={animating}>
+                <AnimatedIcon
+                  name={task.complete ? "check-circle" : "circle"}
+                  style={colorAnimatedStyles}
+                  size={24}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
+          {task.dueAt && (
+            <TouchableOpacity onPress={changeDate}>
+              <Animated.Text style={[styles.dueText, tintColorAnimatedStyles]}>
+                {isPastDue
+                  ? `${relativeTime} past due`
+                  : `Due in ${relativeTime}`}
+              </Animated.Text>
+            </TouchableOpacity>
+          )}
         </Animated.View>
       </GestureDetector>
     </Animated.View>
@@ -254,10 +314,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#50C878",
   },
   taskContainer: {
+    borderRadius: 10,
+  },
+  topContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-
-    borderRadius: 10,
+  },
+  dueText: {
+    margin: 10,
+    marginTop: 0,
   },
   taskText: {
     flex: 1,
