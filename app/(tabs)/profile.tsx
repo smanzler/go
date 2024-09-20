@@ -21,7 +21,6 @@ import { AntDesign } from "@expo/vector-icons";
 const Profile = () => {
   const { isAuthenticated, user } = useAuth();
   const { theme } = useTheme();
-  console.log(user);
 
   return !isAuthenticated ? (
     <ThemedView style={styles.container}>

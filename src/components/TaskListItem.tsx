@@ -1,4 +1,5 @@
 import {
+  LayoutAnimation,
   NativeSyntheticEvent,
   StyleSheet,
   TextInput,
@@ -71,7 +72,6 @@ function TaskListItem({ task }: TaskListItem) {
   }, [theme, isPastDue]);
 
   useEffect(() => {
-    console.log(task.dueAt);
     if (task.dueAt) {
       setRelativeTime(getRelativeTimeDifference(task.dueAt));
     }
@@ -310,7 +310,7 @@ function TaskListItem({ task }: TaskListItem) {
               </TouchableOpacity>
             </View>
           </View>
-          {task.dueAt && (
+          {task.dueAt && !task.complete && (
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
