@@ -34,6 +34,7 @@ import Animated, {
 import { usePanXGesture } from "../hooks/usePanXGesture";
 import { GestureDetector } from "react-native-gesture-handler";
 import DatePickerModal from "./DatePickerModal";
+import dayjs from "dayjs";
 
 export type TaskListItem = {
   task: Task;
@@ -310,11 +311,19 @@ function TaskListItem({ task }: TaskListItem) {
             </View>
           </View>
           {task.dueAt && (
-            <Animated.Text style={[styles.dueText, tintColorAnimatedStyles]}>
-              {isPastDue
-                ? `${relativeTime} past due`
-                : `Due in ${relativeTime}`}
-            </Animated.Text>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <Animated.Text style={[styles.dueText, tintColorAnimatedStyles]}>
+                {isPastDue
+                  ? `${relativeTime} past due`
+                  : `Due in ${relativeTime}`}
+              </Animated.Text>
+
+              <Animated.Text style={[styles.dueText, tintColorAnimatedStyles]}>
+                {dayjs(date).format("h:mm A")}
+              </Animated.Text>
+            </View>
           )}
         </Animated.View>
       </GestureDetector>
