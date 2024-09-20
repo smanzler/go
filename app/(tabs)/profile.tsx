@@ -25,10 +25,11 @@ const Profile = () => {
   return !isAuthenticated ? (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.text}>
-        Welcome to Go!
+        Welcome to Plan On It!
       </ThemedText>
       <ThemedText type="default" style={styles.text}>
-        In order to see your profile you must log in or make an account.
+        In order to see your profile and sync your tasks with the cloud, you
+        must log in or make an account.
       </ThemedText>
       <Button
         title="Log in"
