@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export async function mySync(
   user: User | undefined,
+  updateLastSync: (timestamp: number) => Promise<void>,
   setSyncing: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   if (!user) {
@@ -30,7 +31,7 @@ export async function mySync(
       console.log("pull", JSON.stringify(data));
       if (error) console.log(error);
 
-      await AsyncStorage.setItem("lastSync", data.timestamp.toString());
+      await updateLastSync(data.timestamp);
 
       return { changes: data.changes, timestamp: data.timestamp };
     },

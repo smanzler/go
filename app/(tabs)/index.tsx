@@ -29,6 +29,7 @@ import IndexHeader from "@/src/components/navigation/IndexHeader";
 import { useAuth } from "@/src/providers/AuthProvider";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import dayjs, { Dayjs } from "dayjs";
+import { useSync } from "@/src/providers/SyncProvider";
 
 const Index = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -36,19 +37,7 @@ const Index = () => {
 
   const { theme } = useTheme();
   const { user } = useAuth();
-
-  const [lastSync, setLastSync] = useState<Dayjs | null>(null);
-
-  useEffect(() => {
-    const getSync = async () => {
-      const lastSyncValue = await AsyncStorage.getItem("lastSync");
-      if (lastSyncValue) {
-        setLastSync(dayjs(Number(lastSyncValue)));
-      }
-    };
-
-    getSync();
-  }, []);
+  const { lastSync, updateLastSync } = useSync();
 
   return (
     <ScrollView
@@ -69,7 +58,7 @@ const Index = () => {
         <Button
           title="Sync"
           color={theme.primary}
-          onPress={() => mySync(user, setSyncing)}
+          onPress={() => mySync(user, updateLastSync, setSyncing)}
         />
 
         <Text

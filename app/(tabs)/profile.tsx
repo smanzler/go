@@ -19,24 +19,13 @@ import SettingsListView from "@/src/components/SettingsListView";
 import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import dayjs, { Dayjs } from "dayjs";
+import { useSync } from "@/src/providers/SyncProvider";
 
 const Profile = () => {
   const { isAuthenticated, user } = useAuth();
 
   const { theme, toggleTheme, currentTheme } = useTheme();
-
-  const [lastSync, setLastSync] = useState<Dayjs | null>(null);
-
-  useEffect(() => {
-    const getSync = async () => {
-      const lastSyncValue = await AsyncStorage.getItem("lastSync");
-      if (lastSyncValue) {
-        setLastSync(dayjs(Number(lastSyncValue)));
-      }
-    };
-
-    getSync();
-  }, []);
+  const { lastSync } = useSync();
 
   const changeTheme = () => {
     toggleTheme(currentTheme === "light" ? "dark" : "light");
