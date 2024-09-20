@@ -96,16 +96,16 @@ const TaskScreen = () => {
 
         <TouchableOpacity
           onPress={addDate}
-          style={[styles.btn, { backgroundColor: theme.primary }]}
+          style={[styles.btn, useElevation(10, theme)]}
         >
           <ThemedText>
-            {date ? dayjs(date).format("YYYY-MM-DD HH:mm") : "Add date +"}
+            {date ? dayjs(date).format("MMMM D, YYYY h:mm A") : "Add date +"}
           </ThemedText>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={saveTask}
-          style={[styles.btn, useElevation(10, theme)]}
+          style={[styles.btn, { backgroundColor: theme.primary }]}
         >
           <ThemedText>Save Task</ThemedText>
         </TouchableOpacity>
