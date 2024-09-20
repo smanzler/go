@@ -142,7 +142,10 @@ function TaskListItem({ task }: TaskListItem) {
   };
 
   const onExit = async () => {
-    if (task.dueAt === date) return;
+    if (task.dueAt === date) {
+      setDateModalVisible(false);
+      return;
+    }
     await database.write(async () => {
       await task.update((task) => {
         task.dueAt = date;

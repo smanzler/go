@@ -23,6 +23,7 @@ import { AntDesign, Entypo } from "@expo/vector-icons";
 import DateTimePicker from "react-native-ui-datepicker";
 import { ThemedText } from "@/src/components/ThemedText";
 import DatePickerModal from "@/src/components/DatePickerModal";
+import dayjs from "dayjs";
 
 const TaskScreen = () => {
   const [description, setDescription] = useState("");
@@ -73,7 +74,10 @@ const TaskScreen = () => {
   };
 
   const addDate = () => {
-    date ? setDate(null) : (setDate(new Date()), setDateModalVisible(true));
+    if (!date) {
+      setDate(new Date());
+    }
+    setDateModalVisible(true);
   };
 
   return (
@@ -94,17 +98,14 @@ const TaskScreen = () => {
           onPress={addDate}
           style={[styles.btn, { backgroundColor: theme.primary }]}
         >
-          <ThemedText>{date ? "Remove date -" : "Add date +"}</ThemedText>
+          <ThemedText>
+            {date ? dayjs(date).format("YYYY-MM-DD HH:mm") : "Add date +"}
+          </ThemedText>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={saveTask}
-          style={[
-            styles.btn,
-            {
-              backgroundColor: theme.background,
-            },
-          ]}
+          style={[styles.btn, useElevation(10, theme)]}
         >
           <ThemedText>Save Task</ThemedText>
         </TouchableOpacity>

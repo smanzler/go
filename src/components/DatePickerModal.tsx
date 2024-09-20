@@ -5,7 +5,7 @@ import { useTheme } from "../providers/ThemeProvider";
 import { BlurView } from "expo-blur";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ThemedText } from "./ThemedText";
-import { useElevation } from "../constants/Themes";
+import { addTint, useElevation } from "../constants/Themes";
 
 type Props = {
   date: Date | null;
@@ -28,7 +28,20 @@ const DatePickerModal = ({ date, setDate, visible, onExit }: Props) => {
             headerTextStyle={{ color: theme.text }}
             weekDaysTextStyle={{ color: theme.text }}
             headerButtonColor={theme.text}
-            onChange={(params: any) => setDate(params.date)}
+            monthContainerStyle={{
+              borderWidth: 0,
+              backgroundColor: theme.useShadow
+                ? addTint(theme.background, theme.useShadow, 10)
+                : theme.background,
+            }}
+            timePickerTextStyle={{ color: theme.text }}
+            timePickerIndicatorStyle={{
+              backgroundColor: theme.useShadow
+                ? addTint(theme.background, theme.useShadow, 10)
+                : theme.background,
+            }}
+            todayTextStyle={{ color: theme.text }}
+            onChange={({ date }: any) => setDate(date)}
             timePicker
           />
         </View>
