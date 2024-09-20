@@ -28,17 +28,27 @@ import { LinearGradient } from "expo-linear-gradient";
 import IndexHeader from "@/src/components/navigation/IndexHeader";
 import { useAuth } from "@/src/providers/AuthProvider";
 import Animated, { LinearTransition } from "react-native-reanimated";
+import dayjs, { Dayjs } from "dayjs";
 
 const Index = () => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [syncing, setSyncing] = useState<boolean>(false);
 
-  const { theme, toggleTheme, currentTheme } = useTheme();
+  const { theme } = useTheme();
   const { user } = useAuth();
 
-  const onPress = () => {
-    toggleTheme(currentTheme === "light" ? "dark" : "light");
-  };
+  const [lastSync, setLastSync] = useState<Dayjs | null>(null);
+
+  useEffect(() => {
+    const getSync = async () => {
+      const lastSyncValue = await AsyncStorage.getItem("lastSync");
+      if (lastSyncValue) {
+        setLastSync(dayjs(Number(lastSyncValue)));
+      }
+    };
+
+    getSync();
+  }, []);
 
   return (
     <ScrollView
@@ -56,8 +66,17 @@ const Index = () => {
       <TasksList />
 
       <Animated.View layout={LinearTransition}>
-        <Button title="Change Theme" onPress={onPress} />
-        <Button title="Sync" onPress={() => mySync(user, setSyncing)} />
+        <Button
+          title="Sync"
+          color={theme.primary}
+          onPress={() => mySync(user, setSyncing)}
+        />
+
+        <Text
+          style={{ color: theme.primary, marginTop: 30, textAlign: "center" }}
+        >
+          {`Last synced at\n${lastSync?.format("MMMM D, YYYY h:mm A")}`}
+        </Text>
         <View style={{ height: 300 }} />
       </Animated.View>
     </ScrollView>

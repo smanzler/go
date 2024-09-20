@@ -3,6 +3,7 @@ import database from ".";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../providers/AuthProvider";
 import { User } from "@supabase/supabase-js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export async function mySync(
   user: User | undefined,
@@ -28,6 +29,8 @@ export async function mySync(
 
       console.log("pull", JSON.stringify(data));
       if (error) console.log(error);
+
+      await AsyncStorage.setItem("lastSync", data.timestamp.toString());
 
       return { changes: data.changes, timestamp: data.timestamp };
     },

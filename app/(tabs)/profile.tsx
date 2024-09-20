@@ -18,20 +18,29 @@ import RemoteImage from "@/src/components/RemoteImage";
 import SettingsListView from "@/src/components/SettingsListView";
 import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import dayjs, { Dayjs } from "dayjs";
 
 const Profile = () => {
   const { isAuthenticated, user } = useAuth();
-  const { theme } = useTheme();
 
-  const [lastSync, setLastSync] = useState<string | null>("");
+  const { theme, toggleTheme, currentTheme } = useTheme();
+
+  const [lastSync, setLastSync] = useState<Dayjs | null>(null);
 
   useEffect(() => {
     const getSync = async () => {
-      setLastSync(await AsyncStorage.getItem("lastSync"));
+      const lastSyncValue = await AsyncStorage.getItem("lastSync");
+      if (lastSyncValue) {
+        setLastSync(dayjs(Number(lastSyncValue)));
+      }
     };
 
     getSync();
   }, []);
+
+  const changeTheme = () => {
+    toggleTheme(currentTheme === "light" ? "dark" : "light");
+  };
 
   return !isAuthenticated || !user ? (
     <ThemedView style={styles.container}>
@@ -51,11 +60,27 @@ const Profile = () => {
     <ThemedView
       style={{ flex: 1, alignItems: "center", padding: 26, paddingTop: 100 }}
     >
-      <ThemedText>Signed in as {user.email}</ThemedText>
+      <ThemedText style={{ marginBottom: 30 }}>
+        Signed in as {user.email}
+      </ThemedText>
 
-      <Button title="Log out" onPress={() => supabase.auth.signOut()}></Button>
+      <Button
+        title="Change Theme"
+        color={theme.primary}
+        onPress={changeTheme}
+      />
 
-      <ThemedText>{lastSync}</ThemedText>
+      <Button
+        title="Log out"
+        color={theme.primary}
+        onPress={() => supabase.auth.signOut()}
+      />
+
+      <Text
+        style={{ color: theme.primary, marginTop: 30, textAlign: "center" }}
+      >
+        {`Last synced at\n${lastSync?.format("MMMM D, YYYY h:mm A")}`}
+      </Text>
     </ThemedView>
   );
 };
