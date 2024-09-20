@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ThemedView } from "@/src/components/ThemedView";
 import { ThemedText } from "@/src/components/ThemedText";
 import { router } from "expo-router";
@@ -17,12 +17,23 @@ import { useTheme } from "@/src/providers/ThemeProvider";
 import RemoteImage from "@/src/components/RemoteImage";
 import SettingsListView from "@/src/components/SettingsListView";
 import { AntDesign } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Profile = () => {
   const { isAuthenticated, user } = useAuth();
   const { theme } = useTheme();
 
-  return !isAuthenticated ? (
+  const [lastSync, setLastSync] = useState<string | null>("");
+
+  useEffect(() => {
+    const getSync = async () => {
+      setLastSync(await AsyncStorage.getItem("lastSync"));
+    };
+
+    getSync();
+  }, []);
+
+  return !isAuthenticated || !user ? (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.text}>
         Welcome to Plan On It!
@@ -37,65 +48,15 @@ const Profile = () => {
       ></Button>
     </ThemedView>
   ) : (
-    <ScrollView
-      style={{
-        flex: 1,
-        padding: 40,
-        backgroundColor: theme.background,
-      }}
+    <ThemedView
+      style={{ flex: 1, alignItems: "center", padding: 26, paddingTop: 100 }}
     >
-      <View style={[styles.card, useElevation(10, theme)]}>
-        <View style={styles.profilePic}>
-          <RemoteImage
-            path={user?.id}
-            profile
-            style={{ flex: 1, aspectRatio: 1 }}
-          />
-        </View>
-      </View>
+      <ThemedText>Signed in as {user.email}</ThemedText>
+
       <Button title="Log out" onPress={() => supabase.auth.signOut()}></Button>
 
-      <SettingsListView
-        settings={[
-          {
-            name: "Profile",
-            route: "profile",
-            rightIcon: () => (
-              <AntDesign
-                name="right"
-                style={{ alignSelf: "center" }}
-                size={18}
-                color={theme.text}
-              />
-            ),
-          },
-          {
-            name: "Theme",
-            route: "theme",
-            rightIcon: () => (
-              <AntDesign
-                name="right"
-                style={{ alignSelf: "center" }}
-                size={18}
-                color={theme.text}
-              />
-            ),
-          },
-          {
-            name: "About",
-            route: "about",
-            rightIcon: () => (
-              <AntDesign
-                name="right"
-                style={{ alignSelf: "center" }}
-                size={18}
-                color={theme.text}
-              />
-            ),
-          },
-        ]}
-      />
-    </ScrollView>
+      <ThemedText>{lastSync}</ThemedText>
+    </ThemedView>
   );
 };
 
