@@ -40,6 +40,12 @@ const DatePickerModal = ({ date, setDate, visible, onExit }: Props) => {
                 ? addTint(theme.background, theme.useShadow, 10)
                 : theme.background,
             }}
+            yearContainerStyle={{
+              borderWidth: 0,
+              backgroundColor: theme.useShadow
+                ? addTint(theme.background, theme.useShadow, 10)
+                : theme.background,
+            }}
             todayTextStyle={{ color: theme.text }}
             onChange={({ date }: any) => setDate(date)}
             timePicker
