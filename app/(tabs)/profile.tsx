@@ -65,11 +65,13 @@ const Profile = () => {
         onPress={() => supabase.auth.signOut()}
       />
 
-      <Text
-        style={{ color: theme.primary, marginTop: 30, textAlign: "center" }}
-      >
-        {`Last synced at\n${lastSync?.format("MMMM D, YYYY h:mm A")}`}
-      </Text>
+      {lastSync && user && (
+        <Text
+          style={{ color: theme.primary, marginTop: 30, textAlign: "center" }}
+        >
+          {`Last synced at\n${lastSync?.format("MMMM D, YYYY h:mm A")}`}
+        </Text>
+      )}
     </ThemedView>
   );
 };

@@ -54,20 +54,28 @@ const Index = () => {
 
       <TasksList />
 
-      <Animated.View layout={LinearTransition}>
-        <Button
-          title="Sync"
-          color={theme.primary}
-          onPress={() => mySync(user, updateLastSync, setSyncing)}
-        />
+      {user && (
+        <Animated.View layout={LinearTransition}>
+          <Button
+            title="Sync"
+            color={theme.primary}
+            onPress={() => mySync(user, updateLastSync, setSyncing)}
+          />
 
-        <Text
-          style={{ color: theme.primary, marginTop: 30, textAlign: "center" }}
-        >
-          {`Last synced at\n${lastSync?.format("MMMM D, YYYY h:mm A")}`}
-        </Text>
-        <View style={{ height: 300 }} />
-      </Animated.View>
+          {lastSync && (
+            <Text
+              style={{
+                color: theme.primary,
+                marginTop: 30,
+                textAlign: "center",
+              }}
+            >
+              {`Last synced at\n${lastSync?.format("MMMM D, YYYY h:mm A")}`}
+            </Text>
+          )}
+          <View style={{ height: 300 }} />
+        </Animated.View>
+      )}
     </ScrollView>
   );
 };
