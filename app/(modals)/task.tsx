@@ -85,7 +85,7 @@ const TaskScreen = () => {
       <BlurView intensity={80} style={styles.container}>
         <TextInput
           ref={inputRef}
-          style={[styles.input]}
+          style={[styles.input, { color: theme.text }]}
           placeholderTextColor={"#d3d3d3"}
           placeholder={placeholderText}
           value={description}
@@ -138,7 +138,6 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: 20,
-    color: "white",
     marginBottom: 50,
   },
   exitBtn: {
