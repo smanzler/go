@@ -1,9 +1,12 @@
 import {
+  Alert,
   Button,
   Image,
+  Modal,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
@@ -16,7 +19,7 @@ import { useElevation } from "@/src/constants/Themes";
 import { useTheme } from "@/src/providers/ThemeProvider";
 import RemoteImage from "@/src/components/RemoteImage";
 import SettingsListView from "@/src/components/SettingsListView";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import dayjs, { Dayjs } from "dayjs";
 import { useSync } from "@/src/providers/SyncProvider";
@@ -27,9 +30,40 @@ const Profile = () => {
   const { theme, toggleTheme, currentTheme } = useTheme();
   const { lastSync } = useSync();
 
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
   const changeTheme = () => {
     toggleTheme(currentTheme === "light" ? "dark" : "light");
   };
+
+  const onDelete = async () => {
+    setDeleteLoading(true);
+
+    const data = await supabase.rpc("delete_user");
+
+    console.log(data);
+
+    supabase.auth.signOut();
+
+    setDeleteLoading(false);
+  };
+
+  const deleteAlert = () =>
+    Alert.alert(
+      "Are you sure you want to delete your account?",
+      "This cannot be undone.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: onDelete,
+          style: "destructive",
+        },
+      ]
+    );
 
   return !isAuthenticated || !user ? (
     <ThemedView style={styles.container}>
@@ -64,6 +98,8 @@ const Profile = () => {
         color={theme.primary}
         onPress={() => supabase.auth.signOut()}
       />
+
+      <Button title="Delete Account" color={"red"} onPress={deleteAlert} />
 
       {lastSync && user && (
         <Text
