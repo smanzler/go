@@ -30,6 +30,7 @@ import { useAuth } from "@/src/providers/AuthProvider";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import dayjs, { Dayjs } from "dayjs";
 import { useSync } from "@/src/providers/SyncProvider";
+import { usePushNotifications } from "@/src/hooks/usePushNotifications";
 
 const Index = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -38,6 +39,11 @@ const Index = () => {
   const { theme } = useTheme();
   const { user } = useAuth();
   const { lastSync, updateLastSync } = useSync();
+
+  const { expoPushToken, notification } = usePushNotifications();
+  const data = JSON.stringify(notification, undefined, 2);
+
+  console.log(expoPushToken?.data);
 
   return (
     <ScrollView
