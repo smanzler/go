@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
+import Task from "../models/Task";
 
 export interface PushNotificationState {
   notification?: Notifications.Notification;
@@ -24,21 +25,19 @@ export const removeNotificationId = async (taskId: string) => {
   await AsyncStorage.removeItem(`task-notification-${taskId}`);
 };
 
-export const scheduleNotification = async (
-  taskId: string,
-  scheduleDate: Date | number
-) => {
-  const date = new Date(scheduleDate);
+export const scheduleNotification = async (task: Task) => {
+  const date = new Date(task.dueAt);
 
   const notificationId = await Notifications.scheduleNotificationAsync({
     content: {
-      title: "Reminder",
+      title: task.description,
       body: "This is your scheduled notification!",
+      data: { taskId: task.id },
     },
     trigger: { date },
   });
 
-  await saveNotificationId(taskId, notificationId);
+  await saveNotificationId(task.id, notificationId);
 };
 
 export const usePushNotifications = (): PushNotificationState => {
@@ -101,8 +100,16 @@ export const usePushNotifications = (): PushNotificationState => {
     });
 
     notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
+      Notifications.addNotificationReceivedListener(async (notification) => {
         setNotification(notification);
+
+        const taskId = notification.request.content.data.taskId;
+
+        console.log("removing", taskId);
+
+        if (taskId) {
+          await removeNotificationId(taskId);
+        }
       });
 
     responseListener.current =

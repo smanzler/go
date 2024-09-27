@@ -61,15 +61,15 @@ const TaskScreen = () => {
   const saveTask = async () => {
     if (description.trim()) {
       await database.write(async () => {
-        const { id } = await tasksCollection.create((task) => {
+        const task = await tasksCollection.create((task) => {
           task.description = description.trim();
           task.complete = false;
           task.dueAt = date;
           isAuthenticated && (task.userId = user?.id);
         });
 
-        if (date) {
-          await scheduleNotification(id, date);
+        if (date && dayjs(date).isAfter(dayjs())) {
+          await scheduleNotification(task);
         }
       });
       setDescription("");
