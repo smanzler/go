@@ -24,6 +24,7 @@ import DateTimePicker from "react-native-ui-datepicker";
 import { ThemedText } from "@/src/components/ThemedText";
 import DatePickerModal from "@/src/components/DatePickerModal";
 import dayjs from "dayjs";
+import { scheduleNotification } from "@/src/hooks/usePushNotifications";
 
 const TaskScreen = () => {
   const [description, setDescription] = useState("");
@@ -60,12 +61,16 @@ const TaskScreen = () => {
   const saveTask = async () => {
     if (description.trim()) {
       await database.write(async () => {
-        await tasksCollection.create((task) => {
+        const { id } = await tasksCollection.create((task) => {
           task.description = description.trim();
           task.complete = false;
           task.dueAt = date;
           isAuthenticated && (task.userId = user?.id);
         });
+
+        if (date) {
+          await scheduleNotification(id, date);
+        }
       });
       setDescription("");
       router.back();

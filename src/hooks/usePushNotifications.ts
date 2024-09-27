@@ -1,5 +1,6 @@
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
@@ -8,6 +9,37 @@ export interface PushNotificationState {
   notification?: Notifications.Notification;
   expoPushToken?: Notifications.ExpoPushToken;
 }
+
+const saveNotificationId = async (taskId: string, notificationId: string) => {
+  await AsyncStorage.setItem(`task-notification-${taskId}`, notificationId);
+};
+
+export const getNotificationId = async (
+  taskId: string
+): Promise<string | null> => {
+  return await AsyncStorage.getItem(`task-notification-${taskId}`);
+};
+
+export const removeNotificationId = async (taskId: string) => {
+  await AsyncStorage.removeItem(`task-notification-${taskId}`);
+};
+
+export const scheduleNotification = async (
+  taskId: string,
+  scheduleDate: Date | number
+) => {
+  const date = new Date(scheduleDate);
+
+  const notificationId = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "Reminder",
+      body: "This is your scheduled notification!",
+    },
+    trigger: { date },
+  });
+
+  await saveNotificationId(taskId, notificationId);
+};
 
 export const usePushNotifications = (): PushNotificationState => {
   Notifications.setNotificationHandler({
