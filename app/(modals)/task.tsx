@@ -20,11 +20,10 @@ import { addTint, useElevation } from "@/src/constants/Themes";
 import tinycolor from "tinycolor2";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { AntDesign, Entypo } from "@expo/vector-icons";
-import DateTimePicker from "react-native-ui-datepicker";
 import { ThemedText } from "@/src/components/ThemedText";
-import DatePickerModal from "@/src/components/DatePickerModal";
 import dayjs from "dayjs";
 import { scheduleNotification } from "@/src/hooks/usePushNotifications";
+import DatePicker from "react-native-date-picker";
 
 const TaskScreen = () => {
   const [description, setDescription] = useState("");
@@ -122,11 +121,17 @@ const TaskScreen = () => {
           <AntDesign name="left" color={theme.primary} size={30} />
         </TouchableOpacity>
 
-        <DatePickerModal
-          date={date}
-          setDate={setDate}
-          visible={dateModalVisible}
-          onExit={() => setDateModalVisible(false)}
+        <DatePicker
+          modal
+          date={date || new Date()}
+          open={dateModalVisible}
+          onConfirm={(date: Date) => {
+            setDate(date);
+            setDateModalVisible(false);
+          }}
+          onCancel={() => {
+            setDateModalVisible(false);
+          }}
         />
       </BlurView>
     </TouchableWithoutFeedback>
