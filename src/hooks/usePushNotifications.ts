@@ -31,7 +31,7 @@ export const scheduleNotification = async (task: Task) => {
   const notificationId = await Notifications.scheduleNotificationAsync({
     content: {
       title: task.description,
-      body: "This is your scheduled notification!",
+      body: "Reminder",
       data: { taskId: task.id },
     },
     trigger: { date },
