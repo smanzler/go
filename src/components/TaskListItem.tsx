@@ -34,8 +34,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { usePanXGesture } from "../hooks/usePanXGesture";
 import { GestureDetector } from "react-native-gesture-handler";
-import DatePickerModal from "./DatePickerModal";
 import dayjs from "dayjs";
+import DatePicker from "react-native-date-picker";
 
 export type TaskListItem = {
   task: Task;
@@ -48,7 +48,6 @@ function TaskListItem({ task }: TaskListItem) {
   const [isPastDue, setIsPastDue] = useState(false);
   const [relativeTime, setRelativeTime] = useState<string>();
   const [dateModalVisible, setDateModalVisible] = useState(false);
-  const [date, setDate] = useState<Date | null>(task.dueAt);
 
   const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
   const AnimatedIcon = Animated.createAnimatedComponent(Feather);
@@ -142,7 +141,8 @@ function TaskListItem({ task }: TaskListItem) {
     });
   };
 
-  const onExit = async () => {
+  const onExit = async (date: any) => {
+    console.log(date);
     if (task.dueAt === date) {
       setDateModalVisible(false);
       return;
@@ -310,7 +310,7 @@ function TaskListItem({ task }: TaskListItem) {
               </TouchableOpacity>
             </View>
           </View>
-          {task.dueAt && !task.complete && (
+          {task.dueAt && task.dueAt && !task.complete && (
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
@@ -321,18 +321,23 @@ function TaskListItem({ task }: TaskListItem) {
               </Animated.Text>
 
               <Animated.Text style={[styles.dueText, tintColorAnimatedStyles]}>
-                {dayjs(date).format("h:mm A")}
+                {dayjs(task.dueAt).format("h:mm A")}
               </Animated.Text>
             </View>
           )}
         </Animated.View>
       </GestureDetector>
 
-      <DatePickerModal
-        date={date}
-        setDate={setDate}
-        visible={dateModalVisible}
-        onExit={onExit}
+      <DatePicker
+        modal
+        open={dateModalVisible}
+        date={task.dueAt || new Date()}
+        onConfirm={(date: any) => {
+          onExit(date);
+        }}
+        onCancel={() => {
+          setDateModalVisible(false);
+        }}
       />
     </Animated.View>
   );

@@ -1,12 +1,15 @@
 import {
+  Alert,
   Button,
   Image,
+  Modal,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ThemedView } from "@/src/components/ThemedView";
 import { ThemedText } from "@/src/components/ThemedText";
 import { router } from "expo-router";
@@ -16,13 +19,53 @@ import { useElevation } from "@/src/constants/Themes";
 import { useTheme } from "@/src/providers/ThemeProvider";
 import RemoteImage from "@/src/components/RemoteImage";
 import SettingsListView from "@/src/components/SettingsListView";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import dayjs, { Dayjs } from "dayjs";
+import { useSync } from "@/src/providers/SyncProvider";
 
 const Profile = () => {
   const { isAuthenticated, user } = useAuth();
-  const { theme } = useTheme();
 
-  return !isAuthenticated ? (
+  const { theme, toggleTheme, currentTheme } = useTheme();
+  const { lastSync } = useSync();
+
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const changeTheme = () => {
+    toggleTheme(currentTheme === "light" ? "dark" : "light");
+  };
+
+  const onDelete = async () => {
+    setDeleteLoading(true);
+
+    const data = await supabase.rpc("delete_user");
+
+    console.log(data);
+
+    supabase.auth.signOut();
+
+    setDeleteLoading(false);
+  };
+
+  const deleteAlert = () =>
+    Alert.alert(
+      "Are you sure you want to delete your account?",
+      "This cannot be undone.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: onDelete,
+          style: "destructive",
+        },
+      ]
+    );
+
+  return !isAuthenticated || !user ? (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.text}>
         Welcome to Plan On It!
@@ -37,65 +80,35 @@ const Profile = () => {
       ></Button>
     </ThemedView>
   ) : (
-    <ScrollView
-      style={{
-        flex: 1,
-        padding: 40,
-        backgroundColor: theme.background,
-      }}
+    <ThemedView
+      style={{ flex: 1, alignItems: "center", padding: 26, paddingTop: 100 }}
     >
-      <View style={[styles.card, useElevation(10, theme)]}>
-        <View style={styles.profilePic}>
-          <RemoteImage
-            path={user?.id}
-            profile
-            style={{ flex: 1, aspectRatio: 1 }}
-          />
-        </View>
-      </View>
-      <Button title="Log out" onPress={() => supabase.auth.signOut()}></Button>
+      <ThemedText style={{ marginBottom: 30 }}>
+        Signed in as {user.email}
+      </ThemedText>
 
-      <SettingsListView
-        settings={[
-          {
-            name: "Profile",
-            route: "profile",
-            rightIcon: () => (
-              <AntDesign
-                name="right"
-                style={{ alignSelf: "center" }}
-                size={18}
-                color={theme.text}
-              />
-            ),
-          },
-          {
-            name: "Theme",
-            route: "theme",
-            rightIcon: () => (
-              <AntDesign
-                name="right"
-                style={{ alignSelf: "center" }}
-                size={18}
-                color={theme.text}
-              />
-            ),
-          },
-          {
-            name: "About",
-            route: "about",
-            rightIcon: () => (
-              <AntDesign
-                name="right"
-                style={{ alignSelf: "center" }}
-                size={18}
-                color={theme.text}
-              />
-            ),
-          },
-        ]}
+      <Button
+        title="Change Theme"
+        color={theme.primary}
+        onPress={changeTheme}
       />
-    </ScrollView>
+
+      <Button
+        title="Log out"
+        color={theme.primary}
+        onPress={() => supabase.auth.signOut()}
+      />
+
+      <Button title="Delete Account" color={"red"} onPress={deleteAlert} />
+
+      {lastSync && user && (
+        <Text
+          style={{ color: theme.primary, marginTop: 30, textAlign: "center" }}
+        >
+          {`Last synced at\n${lastSync?.format("MMMM D, YYYY h:mm A")}`}
+        </Text>
+      )}
+    </ThemedView>
   );
 };
 

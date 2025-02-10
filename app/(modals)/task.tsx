@@ -20,10 +20,10 @@ import { addTint, useElevation } from "@/src/constants/Themes";
 import tinycolor from "tinycolor2";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { AntDesign, Entypo } from "@expo/vector-icons";
-import DateTimePicker from "react-native-ui-datepicker";
 import { ThemedText } from "@/src/components/ThemedText";
-import DatePickerModal from "@/src/components/DatePickerModal";
 import dayjs from "dayjs";
+import { scheduleNotification } from "@/src/hooks/usePushNotifications";
+import DatePicker from "react-native-date-picker";
 
 const TaskScreen = () => {
   const [description, setDescription] = useState("");
@@ -60,12 +60,16 @@ const TaskScreen = () => {
   const saveTask = async () => {
     if (description.trim()) {
       await database.write(async () => {
-        await tasksCollection.create((task) => {
+        const task = await tasksCollection.create((task) => {
           task.description = description.trim();
           task.complete = false;
           task.dueAt = date;
           isAuthenticated && (task.userId = user?.id);
         });
+
+        if (date && dayjs(date).isAfter(dayjs())) {
+          await scheduleNotification(task);
+        }
       });
       setDescription("");
       router.back();
@@ -85,7 +89,7 @@ const TaskScreen = () => {
       <BlurView intensity={80} style={styles.container}>
         <TextInput
           ref={inputRef}
-          style={[styles.input]}
+          style={[styles.input, { color: theme.text }]}
           placeholderTextColor={"#d3d3d3"}
           placeholder={placeholderText}
           value={description}
@@ -117,11 +121,17 @@ const TaskScreen = () => {
           <AntDesign name="left" color={theme.primary} size={30} />
         </TouchableOpacity>
 
-        <DatePickerModal
-          date={date}
-          setDate={setDate}
-          visible={dateModalVisible}
-          onExit={() => setDateModalVisible(false)}
+        <DatePicker
+          modal
+          date={date || new Date()}
+          open={dateModalVisible}
+          onConfirm={(date: Date) => {
+            setDate(date);
+            setDateModalVisible(false);
+          }}
+          onCancel={() => {
+            setDateModalVisible(false);
+          }}
         />
       </BlurView>
     </TouchableWithoutFeedback>
@@ -138,7 +148,6 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: 20,
-    color: "white",
     marginBottom: 50,
   },
   exitBtn: {

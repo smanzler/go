@@ -10,6 +10,7 @@ import { useElevation } from "@/src/constants/Themes";
 import tinycolor from "tinycolor2";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import SettingsHeader from "@/src/components/SettingsHeader";
+import { SyncProvider } from "@/src/providers/SyncProvider";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -33,7 +34,9 @@ export default function RootLayout() {
     <GestureHandlerRootView>
       <AuthProvider>
         <ThemeProvider>
-          <RootLayoutNav />
+          <SyncProvider>
+            <RootLayoutNav />
+          </SyncProvider>
         </ThemeProvider>
       </AuthProvider>
     </GestureHandlerRootView>

@@ -3,9 +3,11 @@ import database from ".";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../providers/AuthProvider";
 import { User } from "@supabase/supabase-js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export async function mySync(
   user: User | undefined,
+  updateLastSync: (timestamp: number) => Promise<void>,
   setSyncing: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   if (!user) {
@@ -28,6 +30,8 @@ export async function mySync(
 
       console.log("pull", JSON.stringify(data));
       if (error) console.log(error);
+
+      await updateLastSync(data.timestamp);
 
       return { changes: data.changes, timestamp: data.timestamp };
     },
