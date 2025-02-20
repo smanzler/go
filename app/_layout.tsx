@@ -59,8 +59,7 @@ function RootLayoutNav() {
       <Stack.Screen
         name="(modals)/task"
         options={{
-          presentation: "transparentModal",
-          animation: "fade",
+          presentation: "modal",
           headerShown: false,
         }}
       />
