@@ -24,6 +24,7 @@ import { ThemedText } from "@/src/components/ThemedText";
 import dayjs from "dayjs";
 import { scheduleNotification } from "@/src/hooks/usePushNotifications";
 import DatePicker from "react-native-date-picker";
+import { ThemedView } from "@/src/components/ThemedView";
 
 const TaskScreen = () => {
   const [description, setDescription] = useState("");
@@ -86,7 +87,7 @@ const TaskScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <BlurView intensity={80} style={styles.container}>
+      <ThemedView style={styles.container}>
         <TextInput
           ref={inputRef}
           style={[styles.input, { color: theme.text }]}
@@ -133,7 +134,7 @@ const TaskScreen = () => {
             setDateModalVisible(false);
           }}
         />
-      </BlurView>
+      </ThemedView>
     </TouchableWithoutFeedback>
   );
 };
